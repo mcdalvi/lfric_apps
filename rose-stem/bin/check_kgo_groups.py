@@ -7,14 +7,14 @@
 """
 Launched if a checksum fails.
 Fails if the required groups weren't run.
-Currently targets nightly for meto only
+Currently targets all for meto only
 """
 
 import sys
 import argparse
 
 SITE_GROUPS = {
-    "meto": "nightly",
+    "meto": "all",
 }
 
 if __name__ == "__main__":

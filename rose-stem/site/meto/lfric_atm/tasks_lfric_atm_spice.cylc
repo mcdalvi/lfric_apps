@@ -11,6 +11,18 @@
         "memory": [8, "GB"],
     }) %}
 
+{% elif task_ns.conf_name == "nwp_gal9-C12-short" %}
+
+    {% do task_dict.update({
+        "memory": [8, "GB"],
+    }) %}
+
+{% elif task_ns.conf_name == "scm_ukca_land-BiP2x2-50000x50000" %}
+
+    {% do task_dict.update({
+        "wallclock": 5,
+    }) %}
+
 {% endif %}
 
 {% do LOG.debug("Finised in site/meto/lfric_atm/tasks_lfric_atm_spice.cylc") %}

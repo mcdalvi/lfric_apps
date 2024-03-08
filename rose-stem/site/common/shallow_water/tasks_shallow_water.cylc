@@ -5,6 +5,40 @@
 {# ########################################################################### #}
 {% do LOG.debug("Entered site/common/shallow_water/tasks_shallow_water.cylc") %}
 
+{% if task_ns.conf_name == "galewsky_vi-C24" %}
 
+    {% do task_dict.update({
+        "opt_confs": ["galewsky_vi"],
+        "resolution": "C24",
+        "DT": 1800,
+        "tsteps": 288,
+        "mpi_parts": 6,
+        "use_xios": false,
+        "kgo_checks": ["checksum"],
+        "plot_str": "plot_swe.py diagShallowWater $NODAL_DATA_DIR C q 72:288 $PLOT_DIR",
+    }) %}
+
+{% elif task_ns.conf_name == "unit_tests" %}
+
+    {% do task_dict.update({
+        "placeholder": true,
+    }) %}
+
+{% elif task.startswith("build") %}
+
+    {% do task_dict.update({
+        "placeholder": true,
+    }) %}
+
+{% endif %}
+
+
+{# Set default values for Gravity Wave tasks #}
+{% if task_dict %}
+    {% do task_dict.update({"application_dir": "apps/applications/shallow_water"}) %}
+    {% if "app_name" not in task_dict %}
+        {% do task_dict.update({"app_name": "shallow_water"}) %}
+    {% endif %}
+{% endif %}
 
 {% do LOG.debug("Finished in site/common/shallow_water/tasks_shallow_water.cylc") %}

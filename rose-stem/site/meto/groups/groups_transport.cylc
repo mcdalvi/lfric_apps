@@ -1,0 +1,82 @@
+{# ########################################################################### #}
+{# (c) Crown copyright 2024 Met Office. All rights reserved. #}
+{# The file LICENCE, distributed with this code, contains details of the terms #}
+{# under which the code may be used. #}
+{# ########################################################################### #}
+{% do LOG.debug("Entered site/meto/groups/groups_transport.cylc") %}
+
+{# Spice Groups #}
+{% do site_groups.update({
+    "transport_spice_developer": [
+        "transport_hadley_dcmip_mol-C48_spice_intel_fast-debug-64bit",
+        "transport_spice_unit_tests",
+    ],
+    "transport_spice": [
+        "transport_spice_developer",
+    ],
+    "transport_spice_unit_tests": [
+        "transport_unit_tests_spice_intel_64bit",
+    ],
+    "transport_spice_build": [
+        "build_transport_spice_intel_fast-debug-64bit",
+    ],
+    }) %}
+
+{# XC40 Groups #}
+{% do site_groups.update({
+    "transport_xc40_developer": [
+        "transport_hadley_dcmip_mol-C48_xc40_intel_fast-debug-64bit",
+        "transport_xc40_unit_tests",
+    ],
+    "transport_xc40": [
+        "transport_xc40_developer",
+    ],
+    "transport_xc40_unit_tests": [
+        "transport_unit_tests_xc40_intel_64bit",
+    ],
+    "transport_xc40_build": [
+        "build_transport_xc40_intel_fast-debug-64bit",
+    ],
+    }) %}
+
+{% do site_groups.update({
+    "transport_developer": [
+        "scripts",
+        "transport_spice_developer",
+        "transport_xc40_developer",
+        "transport_unit_tests",
+    ],
+    "transport": [
+        "transport_developer",
+        "transport_spice",
+        "transport_xc40",
+    ],
+    "transport_unit_tests": [
+        "transport_spice_unit_tests",
+        "transport_xc40_unit_tests",
+    ],
+    "transport_build": [
+        "transport_spice_build",
+        "transport_xc40_build",
+    ],
+    }) %}
+
+{# Platform Generic Extends #}
+{% do site_groups.developer.extend(site_groups.transport_developer) %}
+{% do site_groups.all.extend(site_groups.transport) %}
+{% do site_groups.unit_tests.extend(site_groups.transport_unit_tests) %}
+{% do site_groups.build.extend(site_groups.transport_build) %}
+
+{# Spice Extends #}
+{% do site_groups.spice_developer.extend(site_groups.transport_spice_developer) %}
+{% do site_groups.spice.extend(site_groups.transport_spice) %}
+{% do site_groups.spice_unit_tests.extend(site_groups.transport_spice_unit_tests) %}
+{% do site_groups.spice_build.extend(site_groups.transport_spice_build) %}
+
+{# XC40 Extends #}
+{% do site_groups.xc40_developer.extend(site_groups.transport_xc40_developer) %}
+{% do site_groups.xc40.extend(site_groups.transport_xc40) %}
+{% do site_groups.xc40_unit_tests.extend(site_groups.transport_xc40_unit_tests) %}
+{% do site_groups.xc40_build.extend(site_groups.transport_xc40_build) %}
+
+{% do LOG.debug("Finished in site/meto/groups/groups_transport.cylc") %}

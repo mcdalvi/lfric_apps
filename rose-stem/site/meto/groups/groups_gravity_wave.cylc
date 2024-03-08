@@ -1,0 +1,83 @@
+{# ########################################################################### #}
+{# (c) Crown copyright 2024 Met Office. All rights reserved. #}
+{# The file LICENCE, distributed with this code, contains details of the terms #}
+{# under which the code may be used. #}
+{# ########################################################################### #}
+{% do LOG.debug("Entered site/meto/groups/groups_gravity_wave.cylc") %}
+
+{# Spice Groups #}
+{% do site_groups.update({
+    "gravity_wave_spice_developer": [
+        "gravity_wave_default-C24_spice_intel_fast-debug-64bit",
+        "gravity_wave_spice_unit_tests",
+    ],
+    "gravity_wave_spice": [
+        "gravity_wave_spice_developer",
+    ],
+    "gravity_wave_spice_unit_tests": [
+        "gravity_wave_unit_tests_spice_intel_64bit",
+    ],
+    "gravity_wave_spice_build": [
+        "build_gravity_wave_spice_intel_fast-debug-64bit",
+    ],
+    }) %}
+
+{# XC40 Groups #}
+{% do site_groups.update({
+    "gravity_wave_xc40_developer": [
+        "gravity_wave_default-C24_xc40_intel_fast-debug-64bit",
+        "gravity_wave_xc40_unit_tests",
+    ],
+    "gravity_wave_xc40": [
+        "gravity_wave_xc40_developer",
+    ],
+    "gravity_wave_xc40_unit_tests": [
+        "gravity_wave_unit_tests_xc40_intel_64bit",
+    ],
+    "gravity_wave_xc40_build": [
+        "build_gravity_wave_xc40_intel_fast-debug-64bit",
+    ],
+    }) %}
+
+{# Platform Generic Groups #}
+{% do site_groups.update({
+    "gravity_wave_developer": [
+        "scripts",
+        "gravity_wave_spice_developer",
+        "gravity_wave_xc40_developer",
+        "gravity_wave_unit_tests",
+    ],
+    "gravity_wave": [
+        "gravity_wave_developer",
+        "gravity_wave_spice",
+        "gravity_wave_xc40",
+    ],
+    "gravity_wave_unit_tests": [
+        "gravity_wave_spice_unit_tests",
+        "gravity_wave_xc40_unit_tests",
+    ],
+    "gravity_wave_build": [
+        "gravity_wave_spice_build",
+        "gravity_wave_xc40_build",
+    ],
+    }) %}
+
+{# Platform Generic Extends #}
+{% do site_groups.developer.extend(site_groups.gravity_wave_developer) %}
+{% do site_groups.all.extend(site_groups.gravity_wave) %}
+{% do site_groups.unit_tests.extend(site_groups.gravity_wave_unit_tests) %}
+{% do site_groups.build.extend(site_groups.gravity_wave_build) %}
+
+{# Spice Extends #}
+{% do site_groups.spice_developer.extend(site_groups.gravity_wave_spice_developer) %}
+{% do site_groups.spice.extend(site_groups.gravity_wave_spice) %}
+{% do site_groups.spice_unit_tests.extend(site_groups.gravity_wave_spice_unit_tests) %}
+{% do site_groups.spice_build.extend(site_groups.gravity_wave_spice_build) %}
+
+{# XC40 Extends #}
+{% do site_groups.xc40_developer.extend(site_groups.gravity_wave_xc40_developer) %}
+{% do site_groups.xc40.extend(site_groups.gravity_wave_xc40) %}
+{% do site_groups.xc40_unit_tests.extend(site_groups.gravity_wave_xc40_unit_tests) %}
+{% do site_groups.xc40_build.extend(site_groups.gravity_wave_xc40_build) %}
+
+{% do LOG.debug("Finished iin site/meto/groups/groups_gravity_wave.cylc") %}

@@ -5,15 +5,15 @@
 {# ########################################################################### #}
 {% do LOG.debug("Entered site/meto/groups.cylc") %}
 
-{# This groups file is an example for testing and not
-   representative of the final structure #}
-
 {%- do site_groups.update({
-    "all": [
+    "developer" : [
+        "spice_developer",
+        "xc40_developer",
         "scripts",
-        "gungho",
-        "gungho_model",
-        "lfric_atm",
+    ],
+    "all": [
+        "spice",
+        "xc40",
     ],
     "scripts": [
         "config_dump_checker",
@@ -25,25 +25,49 @@
         "global_variables_checker",
         "python_unit_tests",
     ],
-    "gungho": [
-        "gungho_unit_tests_spice_intel_64bit",
-        "gungho_integration_tests_spice_intel_64bit",
-        "gungho_unit_tests_xc40_intel_64bit",
-        "gungho_integration_tests_xc40_intel_64bit",
+    "build": [
+        "spice_build",
+        "xc40_build",
     ],
-    "gungho_model": [
-        "gungho_model_baroclinic-C24_MG_spice_intel_fast-debug-64bit",
-        "gungho_model_baroclinic-C24_MG_xc40_intel_fast-debug-64bit",
-        "build_gungho_model_spice_intel_fast-debug-64bit",
+    "unit_tests": [
+        "spice_unit_tests",
+        "xc40_unit_tests"
     ],
-    "lfric_atm": [
-        "lfric_atm_nwp_gal9-C12_spice_intel_fast-debug-64bit",
-        "lfric_atm_nwp_gal9-C12_xc40_intel_fast-debug-64bit",
+    "integration_tests": [
+        "spice_integration_tests",
+        "xc40_integration_tests",
     ],
     "monsoon": [
         "gungho_model_xc40",
         "lfric_atm_xc40",
     ],
+    "spice_developer": [],
+    "spice": ["spice_developer"],
+    "xc40_developer": [],
+    "xc40": ["xc40_developer"],
+    "spice_build": [],
+    "xc40_build": [],
+    "spice_unit_tests": [],
+    "xc40_unit_tests": [],
+    "spice_integration_tests": [],
+    "xc40_integration_tests": [],
     }) %}
+
+{% include "site/meto/groups/groups_coupled_interface.cylc" %}
+{% include "site/meto/groups/groups_gravity_wave.cylc" %}
+{% include "site/meto/groups/groups_gungho.cylc" %}
+{% include "site/meto/groups/groups_gungho_model.cylc" %}
+{% include "site/meto/groups/groups_jedi_lfric_interface.cylc" %}
+{% include "site/meto/groups/groups_jedi_lfric_tests.cylc" %}
+{% include "site/meto/groups/groups_lfricinputs.cylc" %}
+{% include "site/meto/groups/groups_lfric_atm.cylc" %}
+{% include "site/meto/groups/groups_lfric_coupled.cylc" %}
+{% include "site/meto/groups/groups_linear.cylc" %}
+{% include "site/meto/groups/groups_linear_model.cylc" %}
+{% include "site/meto/groups/groups_shallow_water.cylc" %}
+{% include "site/meto/groups/groups_socrates_interface.cylc" %}
+{% include "site/meto/groups/groups_solver.cylc" %}
+{% include "site/meto/groups/groups_transport.cylc" %}
+{% include "site/meto/groups/groups_um_physics_interface.cylc" %}
 
 {% do LOG.debug("Finished in site/meto/groups.cylc") %}

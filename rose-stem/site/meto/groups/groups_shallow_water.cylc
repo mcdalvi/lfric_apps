@@ -1,0 +1,83 @@
+{# ########################################################################### #}
+{# (c) Crown copyright 2024 Met Office. All rights reserved. #}
+{# The file LICENCE, distributed with this code, contains details of the terms #}
+{# under which the code may be used. #}
+{# ########################################################################### #}
+{% do LOG.debug("Entered site/meto/groups/groups_shallow_water.cylc") %}
+
+{# Spice Groups #}
+{% do site_groups.update({
+    "shallow_water_spice_developer": [
+        "shallow_water_galewsky_vi-C24_spice_intel_fast-debug-64bit",
+        "shallow_water_spice_unit_tests",
+    ],
+    "shallow_water_spice": [
+        "shallow_water_spice_developer",
+    ],
+    "shallow_water_spice_unit_tests": [
+        "shallow_water_unit_tests_spice_intel_64bit",
+    ],
+    "shallow_water_spice_build": [
+        "build_shallow_water_spice_intel_fast-debug-64bit",
+    ],
+    }) %}
+
+{# XC40 Groups #}
+{% do site_groups.update({
+    "shallow_water_xc40_developer": [
+        "shallow_water_galewsky_vi-C24_xc40_intel_fast-debug-64bit",
+        "shallow_water_xc40_unit_tests",
+    ],
+    "shallow_water_xc40": [
+        "shallow_water_xc40_developer",
+    ],
+    "shallow_water_xc40_unit_tests": [
+        "shallow_water_unit_tests_xc40_intel_64bit",
+    ],
+    "shallow_water_xc40_build": [
+        "build_shallow_water_xc40_intel_fast-debug-64bit",
+    ],
+    }) %}
+
+{# Platform Generic Groups #}
+{% do site_groups.update({
+    "shallow_water_developer": [
+        "scripts",
+        "shallow_water_spice_developer",
+        "shallow_water_xc40_developer",
+        "shallow_water_unit_tests",
+    ],
+    "shallow_water": [
+        "shallow_water_developer",
+        "shallow_water_spice",
+        "shallow_water_xc40",
+    ],
+    "shallow_water_unit_tests": [
+        "shallow_water_spice_unit_tests",
+        "shallow_water_xc40_unit_tests",
+    ],
+    "shallow_water_build": [
+        "shallow_water_spice_build",
+        "shallow_water_xc40_build",
+    ],
+    }) %}
+
+{# Platform Generic Extends #}
+{% do site_groups.developer.extend(site_groups.shallow_water_developer) %}
+{% do site_groups.all.extend(site_groups.shallow_water) %}
+{% do site_groups.unit_tests.extend(site_groups.shallow_water_unit_tests) %}
+{% do site_groups.build.extend(site_groups.shallow_water_build) %}
+
+{# Spice Extends #}
+{% do site_groups.spice_developer.extend(site_groups.shallow_water_spice_developer) %}
+{% do site_groups.spice.extend(site_groups.shallow_water_spice) %}
+{% do site_groups.spice_unit_tests.extend(site_groups.shallow_water_spice_unit_tests) %}
+{% do site_groups.spice_build.extend(site_groups.shallow_water_spice_build) %}
+
+{# Spice Extends #}
+{% do site_groups.xc40_developer.extend(site_groups.shallow_water_xc40_developer) %}
+{% do site_groups.xc40.extend(site_groups.shallow_water_xc40) %}
+{% do site_groups.xc40_unit_tests.extend(site_groups.shallow_water_xc40_unit_tests) %}
+{% do site_groups.xc40_build.extend(site_groups.shallow_water_xc40_build) %}
+
+{% do LOG.debug("Finished in site/meto/groups/groups_shallow_water.cylc") %}

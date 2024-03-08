@@ -1,0 +1,132 @@
+{# ########################################################################### #}
+{# (c) Crown copyright 2024 Met Office. All rights reserved. #}
+{# The file LICENCE, distributed with this code, contains details of the terms #}
+{# under which the code may be used. #}
+{# ########################################################################### #}
+{% do LOG.debug("Entered site/meto/groups/groups_lfricinputs.cylc") %}
+
+{# Spice Groups #}
+{% do site_groups.update({
+    "lfricinputs_spice_developer": [
+        "um2lfric_spice_developer",
+        "lfric2um_spice_developer",
+        "scintel_spice_developer",
+    ],
+    "lfricinputs_spice": [
+        "lfricinputs_spice_developer",
+        "um2lfric_spice",
+        "lfric2um_spice",
+        "scintel_spice",
+    ],
+    "um2lfric_spice_developer": [
+        "lfricinputs_um2lfric-falklands_lam_spice_gfortran-gcc_safe",
+        "lfricinputs_um2lfric-falklands_lam_spice_ifort-gcc_safe",
+        "lfricinputs_um2lfric-protogal-N96L70_C12L70_spice_gfortran-gcc_safe",
+        "lfricinputs_um2lfric-aquaplanet_lam_spice_gfortran-gcc_safe",
+    ],
+    "um2lfric_spice": [
+        "um2lfric_spice_developer",
+    ],
+    "lfric2um_spice_developer": [
+        "lfricinputs_lfric2um-aquaplanet-C48L38_N48L38_spice_gfortran-gcc_safe",
+        "lfricinputs_lfric2um-aquaplanet-C48L38_N48L38_spice_ifort-gcc_safe",
+    ],
+    "lfric2um_spice": [
+        "lfric2um_spice_developer",
+    ],
+    "scintel_spice_developer": [
+        "lfricinputs_scintelapi-basic-C48L38_C48L38_spice_gfortran-gcc_safe",
+        "lfricinputs_scintelapi-basic-C48L38_C48L38_spice_ifort-gcc_safe",
+    ],
+    "scintel_spice": [
+        "scintel_spice_developer",
+    ],
+    }) %}
+
+{# XC40 Groups #}
+{% do site_groups.update({
+    "lfricinputs_xc40_developer": [
+        "um2lfric_xc40_developer",
+        "lfric2um_xc40_developer",
+        "scintel_xc40_developer",
+    ],
+    "lfricinputs_xc40": [
+        "lfricinputs_xc40_developer",
+        "um2lfric_xc40",
+        "lfric2um_xc40",
+        "scintel_xc40",
+    ],
+    "um2lfric_xc40_developer": [
+        "lfricinputs_um2lfric-falklands_lam_xc40_ifort-icc_safe",
+    ],
+    "um2lfric_xc40": [
+        "um2lfric_xc40_developer",
+    ],
+    "lfric2um_xc40_developer": [
+        "lfricinputs_lfric2um-aquaplanet-C48L38_N48L38_xc40_ifort-icc_safe",
+    ],
+    "lfric2um_xc40": [
+        "lfric2um_xc40_developer",
+    ],
+    "scintel_xc40_developer": [
+        "lfricinputs_scintelapi-basic-C48L38_C48L38_xc40_ifort-icc_safe",
+    ],
+    "scintel_xc40": [
+        "scintel_xc40_developer",
+    ],
+    }) %}
+
+{# Platform Generic Groups #}
+{% do site_groups.update({
+    "lfricinputs_developer": [
+        "scripts",
+        "lfricinputs_spice_developer",
+        "lfricinputs_xc40_developer",
+    ],
+    "lfricinputs": [
+        "lfricinputs_developer",
+        "lfricinputs_spice",
+        "lfricinputs_xc40",
+    ],
+    "um2lfric_developer": [
+        "um2lfric_spice_developer",
+        "um2lfric_xc40_developer",
+    ],
+    "um2lfric": [
+        "um2lfric_developer",
+        "um2lfric_spice",
+        "um2lfric_xc40",
+    ],
+    "lfric2um_developer": [
+        "lfric2um_spice_developer",
+        "lfric2um_xc40_developer",
+    ],
+    "lfric2um": [
+        "lfric2um_developer",
+        "lfric2um_spice",
+        "lfric2um_xc40",
+    ],
+    "scintel_developer": [
+        "scintel_spice_developer",
+        "scintel_xc40_developer",
+    ],
+    "scintel": [
+        "scintel_developer",
+        "scintel_spice",
+        "scintel_xc40",
+    ],
+    }) %}
+
+{# Platform Generic Extends #}
+{% do site_groups.developer.extend(site_groups.lfricinputs_developer) %}
+{% do site_groups.all.extend(site_groups.lfricinputs) %}
+
+{# Spice Extends #}
+{% do site_groups.spice_developer.extend(site_groups.lfricinputs_spice_developer) %}
+{% do site_groups.spice.extend(site_groups.lfricinputs_spice) %}
+
+{# XC40 Extends #}
+{% do site_groups.xc40_developer.extend(site_groups.lfricinputs_xc40_developer) %}
+{% do site_groups.xc40.extend(site_groups.lfricinputs_xc40) %}
+
+{% do LOG.debug("Finished in site/meto/groups/groups_lfricinputs.cylc") %}

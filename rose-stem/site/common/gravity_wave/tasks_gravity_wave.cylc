@@ -5,6 +5,37 @@
 {# ########################################################################### #}
 {% do LOG.debug("Entered site/common/gravity_wave/tasks_gravity_wave.cylc") %}
 
+{% if task_ns.conf_name == "default-C24" %}
 
+    {% do task_dict.update({
+        "opt_confs": ["default"],
+        "resolution": "C24",
+        "DT": 100,
+        "tsteps": 36,
+        "kgo_checks": ["checksum"],
+        "plot_str": "sbr.py $NODAL_DATA_DIR/lfric_diag.nc $PLOT_DIR uniform 10 11 gw-default buoyancy 0:0:6",
+    }) %}
+
+{% elif task_ns.conf_name == "unit_tests" %}
+
+    {% do task_dict.update({
+        "placeholder": true,
+    }) %}
+
+{% elif task.startswith("build") %}
+
+    {% do task_dict.update({
+        "placeholder": true,
+    }) %}
+
+{% endif %}
+
+{# Set default values for Gravity Wave tasks #}
+{% if task_dict %}
+    {% do task_dict.update({"application_dir": "apps/applications/gravity_wave"}) %}
+    {% if "app_name" not in task_dict %}
+        {% do task_dict.update({"app_name": "gravity_wave"}) %}
+    {% endif %}
+{% endif %}
 
 {% do LOG.debug("Finished in site/common/gravity_wave/tasks_gravity_wave.cylc") %}

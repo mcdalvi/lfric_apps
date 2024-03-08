@@ -5,6 +5,38 @@
 {# ########################################################################### #}
 {% do LOG.debug("Entered site/common/transport/tasks_transport.cylc") %}
 
+{% if task_ns.conf_name == "hadley_dcmip_mol-C48" %}
 
+    {% do task_dict.update({
+        "opt_confs": ["hadley_dcmip_mol"],
+        "resolution": "C48",
+        "DT": 300,
+        "tsteps": 10,
+        "mpi_parts": 12,
+        "kgo_checks": ["checksum"],
+    }) %}
+
+{% elif task_ns.conf_name == "unit_tests" %}
+
+    {% do task_dict.update({
+        "placeholder": true,
+    }) %}
+
+{% elif task.startswith("build") %}
+
+    {% do task_dict.update({
+        "placeholder": true,
+    }) %}
+
+{% endif %}
+
+
+{# Set default values for Transport tasks #}
+{% if task_dict %}
+    {% do task_dict.update({"application_dir": "apps/applications/transport"}) %}
+    {% if "app_name" not in task_dict %}
+        {% do task_dict.update({"app_name": "transport"}) %}
+    {% endif %}
+{% endif %}
 
 {% do LOG.debug("Finished in site/common/transport/tasks_transport.cylc") %}

@@ -6,5 +6,30 @@
 {% do LOG.debug("Entered site/common/solver/tasks_solver.cylc") %}
 
 
+{% if task_ns.conf_name == "cg-C24" %}
+
+    {% do task_dict.update({
+        "opt_confs": ["cg"],
+        "resolution": "C24",
+        "DT": 600,
+        "kgo_checks": ["checksum"],
+    }) %}
+
+{% elif task.startswith("build") %}
+
+    {% do task_dict.update({
+        "placeholder": true,
+    }) %}
+
+{% endif %}
+
+
+{# Set default values for Solver tasks #}
+{% if task_dict %}
+    {% do task_dict.update({"application_dir": "apps/applications/solver"}) %}
+    {% if "app_name" not in task_dict %}
+        {% do task_dict.update({"app_name": "solver"}) %}
+    {% endif %}
+{% endif %}
 
 {% do LOG.debug("Finished in site/common/solver/tasks_solver.cylc") %}

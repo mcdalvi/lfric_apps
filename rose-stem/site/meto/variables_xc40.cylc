@@ -6,6 +6,11 @@
 {% do LOG.debug("Entered site/meto/variables_xc40.cylc") %}
 
 {% do kgo_vars.update({
+    "lfricinputs_lfric2um-aquaplanet-C48L38_N48L38_xc40_ifort-icc_safe":            BASE~"_t2337",
+
+    "lfricinputs_scintelapi-basic-C48L38_C48L38_xc40_ifort-icc_safe":               BASE~"_t3787",
+
+    "lfricinputs_um2lfric-falklands_lam_xc40_ifort-icc_safe":                       BASE~"_t3613",
     }) %}
 
 {% do LOG.debug("Finished in site/meto/variables_spice.cylc") %}

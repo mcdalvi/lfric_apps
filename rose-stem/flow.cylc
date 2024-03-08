@@ -105,6 +105,7 @@
             SOURCE_ROOT    = $CYLC_WORKFLOW_SHARE_DIR/source
             OUTPUT_ROOT    = $CYLC_WORKFLOW_SHARE_DIR/output
             LAUNCH_SCRIPT  = $SOURCE_ROOT/apps/rose-stem/site/{{SITE}}/common/bin
+            INFRASTRUCTURE_ROSESTEM = $SOURCE_ROOT/core/infrastructure/rose-stem/
 
         [[[events]]]
             submission timeout = PT5H

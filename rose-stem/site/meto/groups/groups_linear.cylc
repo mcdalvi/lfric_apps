@@ -1,0 +1,84 @@
+{# ########################################################################### #}
+{# (c) Crown copyright 2024 Met Office. All rights reserved. #}
+{# The file LICENCE, distributed with this code, contains details of the terms #}
+{# under which the code may be used. #}
+{# ########################################################################### #}
+{% do LOG.debug("Entered site/meto/groups/groups_linear.cylc") %}
+
+{# Spice Groups #}
+{% do site_groups.update({
+    "linear_spice_developer": [
+        "linear_spice_unit_tests",
+        "linear_spice_integration_tests",
+    ],
+    "linear_spice": [
+        "linear_spice_developer",
+    ],
+    "linear_spice_unit_tests": [
+        "linear_unit_tests_spice_intel_64bit",
+    ],
+    "linear_spice_integration_tests": [
+        "linear_integration_tests_spice_intel_64bit",
+    ],
+    }) %}
+
+{# XC40 Groups #}
+{% do site_groups.update({
+    "linear_xc40_developer": [
+        "linear_xc40_unit_tests",
+        "linear_xc40_integration_tests",
+    ],
+    "linear_xc40": [
+        "linear_xc40_developer",
+    ],
+    "linear_xc40_unit_tests": [
+        "linear_unit_tests_xc40_intel_64bit",
+    ],
+    "linear_xc40_integration_tests": [
+        "linear_integration_tests_xc40_intel_64bit",
+    ],
+    }) %}
+
+{# Platform Generic Groups #}
+{% do site_groups.update({
+    "linear_developer": [
+        "scripts",
+        "linear_spice_developer",
+        "linear_xc40_developer",
+        "linear_unit_tests",
+        "linear_integration_tests",
+    ],
+    "linear": [
+        "linear_developer",
+        "linear_spice",
+        "linear_xc40",
+    ],
+    "linear_unit_tests": [
+        "linear_spice_unit_tests",
+        "linear_xc40_unit_tests",
+    ],
+    "linear_integration_tests": [
+        "linear_spice_integration_tests",
+        "linear_xc40_integration_tests",
+    ],
+    }) %}
+
+{# Generic Extends #}
+{% do site_groups.developer.extend(site_groups.linear_developer) %}
+{% do site_groups.all.extend(site_groups.linear) %}
+{% do site_groups.unit_tests.extend(site_groups.linear_unit_tests) %}
+{% do site_groups.integration_tests.extend(site_groups.linear_integration_tests) %}
+
+{# Spice Extends #}
+{% do site_groups.spice_developer.extend(site_groups.linear_spice_developer) %}
+{% do site_groups.spice.extend(site_groups.linear_spice) %}
+{% do site_groups.spice_unit_tests.extend(site_groups.linear_spice_unit_tests) %}
+{% do site_groups.spice_integration_tests.extend(site_groups.linear_spice_integration_tests) %}
+
+{# XC40 Extends #}
+{% do site_groups.xc40_developer.extend(site_groups.linear_xc40_developer) %}
+{% do site_groups.xc40.extend(site_groups.linear_xc40) %}
+{% do site_groups.xc40_unit_tests.extend(site_groups.linear_xc40_unit_tests) %}
+{% do site_groups.xc40_integration_tests.extend(site_groups.linear_xc40_integration_tests) %}
+
+{% do LOG.debug("Finished in site/meto/groups/groups_linear.cylc") %}

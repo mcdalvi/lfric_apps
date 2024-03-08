@@ -1,0 +1,84 @@
+{# ########################################################################### #}
+{# (c) Crown copyright 2024 Met Office. All rights reserved. #}
+{# The file LICENCE, distributed with this code, contains details of the terms #}
+{# under which the code may be used. #}
+{# ########################################################################### #}
+{% do LOG.debug("Entered site/meto/groups/groups_gungho.cylc") %}
+
+{# Spice Groups #}
+{% do site_groups.update({
+    "gungho_spice_developer": [
+        "gungho_spice_unit_tests",
+        "gungho_spice_integration_tests",
+    ],
+    "gungho_spice": [
+        "gungho_spice_developer",
+    ],
+    "gungho_spice_unit_tests": [
+        "gungho_unit_tests_spice_intel_64bit",
+    ],
+    "gungho_spice_integration_tests": [
+        "gungho_integration_tests_spice_intel_64bit",
+    ],
+    }) %}
+
+{# XC40 Groups #}
+{% do site_groups.update({
+    "gungho_xc40_developer": [
+        "gungho_xc40_unit_tests",
+        "gungho_xc40_integration_tests",
+    ],
+    "gungho_xc40": [
+        "gungho_xc40_developer",
+    ],
+    "gungho_xc40_unit_tests": [
+        "gungho_unit_tests_xc40_intel_64bit",
+    ],
+    "gungho_xc40_integration_tests": [
+        "gungho_integration_tests_xc40_intel_64bit",
+    ],
+    }) %}
+
+{# Platform Generic Groups #}
+{% do site_groups.update({
+    "gungho_developer": [
+        "scripts",
+        "gungho_spice_developer",
+        "gungho_xc40_developer",
+        "gungho_unit_tests",
+        "gungho_integration_tests",
+    ],
+    "gungho": [
+        "gungho_developer",
+        "gungho_spice",
+        "gungho_xc40",
+    ],
+    "gungho_unit_tests": [
+        "gungho_spice_unit_tests",
+        "gungho_xc40_unit_tests",
+    ],
+    "gungho_integration_tests": [
+        "gungho_spice_integration_tests",
+        "gungho_xc40_integration_tests",
+    ],
+    }) %}
+
+{# Generic Extends #}
+{% do site_groups.developer.extend(site_groups.gungho_developer) %}
+{% do site_groups.all.extend(site_groups.gungho) %}
+{% do site_groups.unit_tests.extend(site_groups.gungho_unit_tests) %}
+{% do site_groups.integration_tests.extend(site_groups.gungho_integration_tests) %}
+
+{# Spice Extends #}
+{% do site_groups.spice_developer.extend(site_groups.gungho_spice_developer) %}
+{% do site_groups.spice.extend(site_groups.gungho_spice) %}
+{% do site_groups.spice_unit_tests.extend(site_groups.gungho_spice_unit_tests) %}
+{% do site_groups.spice_integration_tests.extend(site_groups.gungho_spice_integration_tests) %}
+
+{# XC40 Extends #}
+{% do site_groups.xc40_developer.extend(site_groups.gungho_xc40_developer) %}
+{% do site_groups.xc40.extend(site_groups.gungho_xc40) %}
+{% do site_groups.xc40_unit_tests.extend(site_groups.gungho_xc40_unit_tests) %}
+{% do site_groups.xc40_integration_tests.extend(site_groups.gungho_xc40_integration_tests) %}
+
+{% do LOG.debug("Finished in site/meto/groups/groups_gungho.cylc") %}

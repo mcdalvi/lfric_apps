@@ -68,6 +68,7 @@
         inherit={{inherit.str|upper}}
         script="rose task-run --app-key=validate_rose_meta"
         [[[environment]]]
+            ROSE_PYTHONPATH = $PYTHONPATH
             ROSE_META_PATH = $SOURCE_ROOT/core/
 
 {% elif "kgo_groups_checker" in task %}

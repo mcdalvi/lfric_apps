@@ -5,6 +5,26 @@
 {# ########################################################################### #}
 {% do LOG.debug("Entered site/common/um_physics_interface/tasks_um_physics_interface.cylc") %}
 
+{% if task_ns.conf_name == "unit_tests" %}
 
+    {% do task_dict.update({
+        "placeholder": true,
+    }) %}
+
+{% elif task.startswith("build") %}
+
+    {% do task_dict.update({
+        "placeholder": true,
+    }) %}
+
+{% endif %}
+
+{# Set default values for um_physics_interface tasks #}
+{% if task_dict %}
+    {% do task_dict.update({"application_dir": "apps/science/um_physics_interface"}) %}
+    {% if "app_name" not in task_dict %}
+        {% do task_dict.update({"app_name": "um_physics_interface"}) %}
+    {% endif %}
+{% endif %}
 
 {% do LOG.debug("Finished in site/common/um_physics_interface/tasks_um_physics_interface.cylc") %}

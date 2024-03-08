@@ -34,6 +34,7 @@ SCIENCE = [
     "gungho",
     "jedi_lfric_interface",
     "linear",
+    "adjoint",
     "socrates_interface",
 ]
 
