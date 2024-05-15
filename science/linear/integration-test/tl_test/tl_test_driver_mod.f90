@@ -22,6 +22,7 @@ module tl_test_driver_mod
                                          finalise_model_data
   use gungho_modeldb_mod,         only : modeldb_type
   use gungho_time_axes_mod,       only : gungho_time_axes_type
+  use io_value_mod,               only : io_value_type
   use io_context_mod,             only : io_context_type
   use log_mod,                    only : log_event,         &
                                          LOG_LEVEL_ALWAYS
@@ -88,6 +89,7 @@ contains
     class(calendar_type), intent(in)    :: calendar
 
     type(gungho_time_axes_type)     :: model_axes
+    type(io_value_type)             :: temp_corr_io_value
 
     call modeldb%values%initialise( 'values', 5 )
 
@@ -110,8 +112,9 @@ contains
     ! the linear application tests on this procedure will hopefully be resolved
     ! in the future, at which point this initialisation may be removed.
     !
-    call modeldb%values%add_key_value( 'temperature_correction_rate', &
-                                       0.0_r_def )
+    call temp_corr_io_value%init('temperature_correction_rate', [0.0_r_def])
+    call modeldb%values%add_key_value( 'temperature_correction_io_value', &
+                                       temp_corr_io_value )
     call modeldb%values%add_key_value( 'total_dry_mass', 0.0_r_def )
     call modeldb%values%add_key_value( 'total_energy', 0.0_r_def )
     call modeldb%values%add_key_value( 'total_energy_previous', 0.0_r_def )

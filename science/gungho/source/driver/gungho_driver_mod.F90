@@ -53,6 +53,7 @@ module gungho_driver_mod
                                   only : aerosol_mesh_name
   use section_choice_config_mod,  only : iau, &
                                          iau_surf
+  use io_value_mod,               only : io_value_type
 
 #ifdef UM_PHYSICS
   use variable_fields_mod,        only : update_variable_fields
@@ -106,6 +107,8 @@ contains
     type(mesh_type),        pointer :: aerosol_mesh      => null()
     type(mesh_type),        pointer :: aerosol_twod_mesh => null()
 
+    type(io_value_type) :: temp_corr_io_value
+
     character(len=*), parameter :: io_context_name = "gungho_atm"
 
 #ifdef UM_PHYSICS
@@ -134,8 +137,9 @@ contains
     end if
 
     ! Rate of temperature adjustment for energy correction
-    call modeldb%values%add_key_value( 'temperature_correction_rate', &
-                                       0.0_r_def )
+    call temp_corr_io_value%init("temperature_correction_rate", [0.0_r_def])
+    call modeldb%values%add_key_value( 'temperature_correction_io_value', &
+                                       temp_corr_io_value)
     ! Total mass of dry atmosphere used for energy correction
     call modeldb%values%add_key_value( 'total_dry_mass', 0.0_r_def )
     ! Total energy of moist atmosphere for calculating energy correction
