@@ -42,4 +42,18 @@
         "plot_str": "", }) %}
 {% endif %}
 
+
+{# For full-debug runs, turn off KGO tests, plotting tasks and CRUNS, and #}
+{# reduce the number of timesteps                                         #}
+{% if task_dict %}
+    {% if "full-debug" in task %}
+        {% do task_dict.update({
+            "tsteps": 4,
+            "crun": 1,
+            "kgo_checks": [],
+            "plot_str": "",
+        }) %}
+    {% endif %}
+{% endif %}
+
 {% do LOG.debug("Finised in site/meto/lfric_atm/tasks_lfric_atm_ex1a.cylc") %}
