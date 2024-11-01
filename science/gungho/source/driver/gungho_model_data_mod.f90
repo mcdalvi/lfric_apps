@@ -41,24 +41,10 @@ module gungho_model_data_mod
     type( field_collection_type ), public   :: electric_fields
     !> Fields owned by the orographic drag schemes
     type( field_collection_type ), public   :: orography_fields
-    !> Fields owned by the turbulence scheme
-    type( field_collection_type ), public   :: turbulence_fields
-    !> Fields owned by the convection schemes
-    type( field_collection_type ), public   :: convection_fields
     !> Fields owned by the cloud schemes
     type( field_collection_type ), public   :: cloud_fields
-    !> Fields owned by the surface exchange scheme
-    type( field_collection_type ), public   :: surface_fields
-    !> Fields owned by the soil hydrology scheme
-    type( field_collection_type ), public   :: soil_fields
-    !> Fields owned by the snow scheme
-    type( field_collection_type ), public   :: snow_fields
-    !> Fields owned by the chemistry schemes
-    type( field_collection_type ), public   :: chemistry_fields
     !> Fields owned by the aerosol schemes
     type( field_collection_type ), public   :: aerosol_fields
-    !> Fields owned by the stochastic physics schemes
-    type( field_collection_type ), public   :: stph_fields
     !> @}
 
     !> FD fields used to read initial conditions from LFRic-Input files

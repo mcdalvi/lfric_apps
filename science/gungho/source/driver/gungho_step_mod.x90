@@ -89,8 +89,8 @@ module gungho_step_mod
     type( field_collection_type ), pointer :: derived_fields => null()
     type( field_collection_type ), pointer :: radiation_fields => null()
     type( field_collection_type ), pointer :: microphysics_fields => null()
-    type( field_collection_type ), pointer :: turbulence_fields => null()
-    type( field_collection_type ), pointer :: convection_fields => null()
+    type( field_collection_type ), pointer :: turbulence_fields
+    type( field_collection_type ), pointer :: convection_fields
 
     type( field_type), pointer :: theta => null()
     type( field_type), pointer :: u => null()
@@ -134,8 +134,8 @@ module gungho_step_mod
     derived_fields => modeldb%model_data%derived_fields
     radiation_fields => modeldb%model_data%radiation_fields
     microphysics_fields => modeldb%model_data%microphysics_fields
-    turbulence_fields => modeldb%model_data%turbulence_fields
-    convection_fields => modeldb%model_data%convection_fields
+    turbulence_fields => modeldb%fields%get_field_collection("turbulence_fields")
+    convection_fields => modeldb%fields%get_field_collection("convection_fields")
 
     ! Get pointers to fields in the prognostic/diagnostic field collections
     ! for use downstream

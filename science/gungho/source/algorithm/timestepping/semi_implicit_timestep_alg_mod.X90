@@ -323,15 +323,15 @@ contains
     microphysics_fields => model_data%microphysics_fields
     electric_fields => model_data%electric_fields
     orography_fields => model_data%orography_fields
-    turbulence_fields => model_data%turbulence_fields
-    convection_fields => model_data%convection_fields
+    turbulence_fields => modeldb%fields%get_field_collection("turbulence_fields")
+    convection_fields => modeldb%fields%get_field_collection("convection_fields")
     cloud_fields => model_data%cloud_fields
-    surface_fields => model_data%surface_fields
-    soil_fields => model_data%soil_fields
-    snow_fields => model_data%snow_fields
-    chemistry_fields => model_data%chemistry_fields
+    surface_fields => modeldb%fields%get_field_collection("surface_fields")
+    soil_fields => modeldb%fields%get_field_collection("soil_fields")
+    snow_fields => modeldb%fields%get_field_collection("snow_fields")
+    chemistry_fields => modeldb%fields%get_field_collection("chemistry_fields")
     aerosol_fields => model_data%aerosol_fields
-    stph_fields => model_data%stph_fields
+    stph_fields => modeldb%fields%get_field_collection("stph_fields")
     lbc_fields => model_data%lbc_fields
 
     temp_corr_io_value => get_io_value( modeldb%values, 'temperature_correction_io_value')

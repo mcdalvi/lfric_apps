@@ -234,14 +234,7 @@ contains
     call self%microphysics%initialise(name='microphysics_fields', table_len=100)
     call self%electric%initialise(name='electric_fields', table_len=100)
     call self%orography%initialise(name='orography_fields', table_len=100)
-    call self%turbulence%initialise(name='turbulence_fields', table_len=100)
-    call self%convection%initialise(name='convection_fields', table_len=100)
-    call self%surface%initialise(name='surface_fields', table_len=100)
-    call self%soil%initialise(name='soil_fields', table_len=100)
-    call self%snow%initialise(name='snow_fields', table_len=100)
-    call self%chemistry%initialise(name='chemistry_fields', table_len=100)
     call self%aerosol%initialise(name='aerosol_fields', table_len=100)
-    call self%stph%initialise(name='stph_fields', table_len=100)
 #endif
    call gungho_axes%initialise()
 if (limited_area) then

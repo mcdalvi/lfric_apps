@@ -96,7 +96,7 @@ contains
     implicit none
 
     type( field_collection_type ), intent( inout ) :: depository
-    type( field_collection_type ), intent( out )   :: ancil_fields
+    type( field_collection_type ), intent( inout )   :: ancil_fields
 
     type( mesh_type ), intent(in), pointer :: mesh
     type( mesh_type ), intent(in), pointer :: twod_mesh
@@ -163,7 +163,6 @@ contains
     write(log_scratch_space,'(A,A)') "Create ancil fields: "// &
           "Setting up ancil field collection"
     call log_event(log_scratch_space, LOG_LEVEL_INFO)
-    call ancil_fields%initialise(name='ancil_fields', table_len=100)
 
     ! Here ancil fields are set up with a call to setup_ancil_field. For ancils
     ! that are time-varying, the time-axis is passed to the setup_ancil_field
@@ -873,7 +872,6 @@ contains
     write(log_scratch_space,'(A,A)') "Create ancil fields: "// &
           "Setting up ancil field collection"
     call log_event(log_scratch_space, LOG_LEVEL_INFO)
-    call ancil_fields%initialise(name='ancil_fields', table_len=100)
 
     ! Here ancil fields are set up with a call to setup_ancil_field.
     if ( ancil_option == ancil_option_idealised ) then

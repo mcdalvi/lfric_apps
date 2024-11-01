@@ -56,6 +56,7 @@ contains
     type( field_type ),            pointer :: theta, rho, dtheta_mphys
     type( field_type )                     :: dmr_mphys(nummr), dcfl, dcff, dbcf
     type( field_array_type ),      pointer :: mr
+    type( field_collection_type ), pointer :: turbulence_fields
 
     type(mesh_type),               pointer :: mesh
 
@@ -71,13 +72,15 @@ contains
     call collection%get_field( "rho", rho )
     mesh => theta%get_mesh()
 
+    turbulence_fields => modeldb%fields%get_field_collection( "turbulence_fields" )
+
     ! Call an algorithm
     call log_event( program_name//": Running CASIM", LOG_LEVEL_INFO )
     call casim_alg( mr%bundle, theta, rho, modeldb%model_data%derived_fields, &
                     modeldb%model_data%microphysics_fields,                   &
                     modeldb%model_data%cloud_fields,                          &
                     modeldb%model_data%aerosol_fields,                        &
-                    modeldb%model_data%turbulence_fields, mesh,               &
+                    turbulence_fields, mesh,                                  &
                     dmr_mphys, dtheta_mphys, dcfl, dcff, dbcf )
     call log_event( program_name//": CASIM completed", LOG_LEVEL_INFO )
 

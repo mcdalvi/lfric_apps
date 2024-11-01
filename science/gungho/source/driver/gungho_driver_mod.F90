@@ -115,6 +115,9 @@ contains
 #ifdef UM_PHYSICS
     ! For clearing IAU fields after use
     type( field_collection_type ), pointer :: field_collection_ptr => null()
+    type( field_collection_type ), pointer :: soil_fields
+    type( field_collection_type ), pointer :: snow_fields
+    type( field_collection_type ), pointer :: surface_fields
 #endif
 
     ! Initialise infrastructure and setup constants
@@ -184,10 +187,13 @@ contains
 
     if ( iau_surf ) then
       field_collection_ptr => modeldb%fields%get_field_collection("iau_surf_fields")
+      soil_fields => modeldb%fields%get_field_collection("soil_fields")
+      snow_fields => modeldb%fields%get_field_collection("snow_fields")
+      surface_fields => modeldb%fields%get_field_collection("surface_fields")
       call add_surf_inc_alg( field_collection_ptr,              &
-                             modeldb%model_data%surface_fields, &
-                             modeldb%model_data%soil_fields,    &
-                             modeldb%model_data%snow_fields )
+                             surface_fields,                    &
+                             soil_fields,                       &
+                             snow_fields )
 
       call field_collection_ptr%clear()
 
@@ -230,6 +236,8 @@ contains
 
     ! For clearing IAU fields after use
     type( field_collection_type ), pointer :: field_collection_ptr => null()
+    type( field_collection_type ), pointer :: surface_fields
+    type( field_collection_type ), pointer :: ancil_fields
 
     regrid_operation => map_scalar_intermesh
     if (use_multires_coupling) then
@@ -319,15 +327,17 @@ contains
     ! first thing that happens in a timestep is that the clock ticks to the
     ! end of timestep date.
     if ( ancil_option == ancil_option_updating ) then
+      surface_fields => modeldb%fields%get_field_collection("surface_fields")
+      ancil_fields => modeldb%fields%get_field_collection("ancil_fields")
       call update_variable_fields( model_axes%ancil_times_list, &
                                    modeldb%clock,                       &
-                                   modeldb%model_data%ancil_fields,     &
+                                   ancil_fields,                        &
                                    regrid_operation,                    &
                                    regrid_lowest_order )
       call update_ancils_alg( model_axes%ancil_times_list, &
                               modeldb%clock,                       &
-                              modeldb%model_data%ancil_fields,     &
-                              modeldb%model_data%surface_fields)
+                              ancil_fields,                        &
+                              surface_fields)
     end if
 
     ! Update the time varying trace gases
