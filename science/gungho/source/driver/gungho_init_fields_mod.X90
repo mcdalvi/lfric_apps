@@ -107,6 +107,14 @@ module gungho_init_fields_mod
   use geometric_constants_mod,            only : get_height
   use sci_field_to_scalar_alg_mod,        only : field_to_scalar_alg
   use fs_continuity_mod,                  only : W1, W2
+#ifdef UM_PHYSICS
+  use planet_config_mod,                  only: rgas => rd
+  use dust_parameters_mod,                only: rhop
+  use aerosol_config_mod,                 only : glomap_mode, &
+                                                 glomap_mode_dust_and_clim
+  use section_choice_config_mod,          only : aerosol, aerosol_um
+  use dust_transform_kernel_mod,          only: dust_transform_kernel_type
+#endif
 
   implicit none
 
@@ -494,6 +502,16 @@ subroutine create_model_data( modeldb,      &
     type( io_value_type ),               pointer :: temp_corr_io_value
     procedure( io_operation_interface ), pointer :: io_op_ptr
 
+    ! Dust fields
+#ifdef UM_PHYSICS
+    type( field_type ), pointer :: dust1_mmr
+    type( field_type ), pointer :: dust2_mmr
+    type( field_type ), pointer :: n_acc_ins
+    type( field_type ), pointer :: acc_ins_du
+    type( field_type ), pointer :: n_cor_ins
+    type( field_type ), pointer :: cor_ins_du
+#endif
+
     type(field_collection_type),   pointer :: prognostic_fields
     type( field_collection_type ), pointer :: depository => null()
     type( field_collection_type ), pointer :: field_collection_ptr => null()
@@ -621,6 +639,27 @@ subroutine create_model_data( modeldb,      &
                                       moist_dyn_array%bundle,               &
                                       modeldb%model_data%fd_fields )
 
+          ! Transform UM 2-bin dust to UKCA LFRIC 2-mode dust
+#ifdef UM_PHYSICS
+          if ( aerosol == aerosol_um .and. &
+               glomap_mode == glomap_mode_dust_and_clim ) then
+
+            ! Load UM dust fields
+            call modeldb%model_data%fd_fields%get_field('dust1_mmr', dust1_mmr)
+            call modeldb%model_data%fd_fields%get_field('dust2_mmr', dust2_mmr)
+            ! Load LFRIC dust fields
+            call modeldb%model_data%aerosol_fields%get_field('n_acc_ins', n_acc_ins)
+            call modeldb%model_data%aerosol_fields%get_field('acc_ins_du', acc_ins_du)
+            call modeldb%model_data%aerosol_fields%get_field('n_cor_ins', n_cor_ins)
+            call modeldb%model_data%aerosol_fields%get_field('cor_ins_du', cor_ins_du)
+
+            ! Transform UM dust fields to LFRIC dust fields
+            call invoke(dust_transform_kernel_type ( n_acc_ins, acc_ins_du, &
+                                                     n_cor_ins, cor_ins_du, &
+                                                     dust1_mmr, dust2_mmr,  &
+                                                     rhop, rgas ) )
+          end if
+#endif
         else
           call log_event("Gungho: Prognostic initialisation from an FD dump not valid "// &
                           "if use_physics is .false., stopping program! ",LOG_LEVEL_ERROR)

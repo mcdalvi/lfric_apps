@@ -39,6 +39,10 @@ module create_fd_prognostics_mod
                                              chem_scheme_strat_test,      &
                                              chem_scheme_strattrop
 
+  use aerosol_config_mod,             only : glomap_mode, &
+                                             glomap_mode_dust_and_clim
+  use section_choice_config_mod,      only : aerosol, aerosol_um
+
   implicit none
   private
   public :: create_fd_prognostics
@@ -310,6 +314,18 @@ contains
       call setup_ancil_field("snow_layer_rgrain", depository, &
                              fd_field_collection, mesh, twod_mesh, &
                              twod=.true., ndata=snow_lev_tile)
+    end if
+
+    ! Dust fields
+    ! Note that both UM aerosol and LFRic-based GLOMAP mode dust fields are needed
+    ! for NWP since we transform the UM fields (dust1_mmr, dust2_mmr) into GLOMAP mode
+    ! dust fields (n_acc_ins, acc_ins_du, n_cor_ins, cor_ins_du)
+    if ( aerosol == aerosol_um .and. &
+         glomap_mode == glomap_mode_dust_and_clim ) then
+      call setup_ancil_field("dust1_mmr", depository, &
+                             fd_field_collection, mesh, twod_mesh)
+      call setup_ancil_field("dust2_mmr", depository, &
+                             fd_field_collection, mesh, twod_mesh)
     end if
 
     ! Chemistry fields

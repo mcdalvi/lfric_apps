@@ -10,8 +10,8 @@
       <field id="qcl_inc" name="qcl" long_name="specific_humidity_cloud_liquid_inc" unit="1" grid_ref="full_level_face_grid" operation="once"/>
       <field id="rho_r2_inc" name="rho_r2" long_name="density_times_r_squared_inc" unit="kg m-1" grid_ref="half_level_face_grid" operation="once"/>
       <field id="theta_inc" name="theta" long_name="air_potential_temperature_inc" standard_name="air_potential_temperature" unit="K" grid_ref="full_level_face_grid" operation="once"/>
-      <field id="dust1_mmr_inc" name="dust1_mmr" long_name="Dust division 1 mass mixing ratio inc" unit="kg/kg" grid_ref="full_level_face_grid" operation="once"/>
-      <field id="dust2_mmr_inc" name="dust2_mmr" long_name="Dust division 2 mass mixing ratio inc" unit="kg/kg" grid_ref="full_level_face_grid" operation="once"/>
+      <field id="dust1_mmr_inc" name="dust1_mmr" long_name="dust_division_1_mass_mixing_ratio_inc" unit="kg kg-1" grid_ref="full_level_face_grid" operation="once"/>
+      <field id="dust2_mmr_inc" name="dust2_mmr" long_name="dust_division_2_mass_mixing_ratio_inc" unit="kg kg-1" grid_ref="full_level_face_grid" operation="once"/>
     </field_group>
   </file>
 </file_definition>

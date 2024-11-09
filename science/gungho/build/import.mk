@@ -10,7 +10,7 @@ import-gungho:
 	$Q$(MAKE) $(QUIET_ARG) -f $(LFRIC_BUILD)/extract.mk \
 			  SOURCE_DIR=$(PROJECT_SOURCE)
 	$Q$(MAKE) $(QUIET_ARG) -f $(LFRIC_BUILD)/extract.mk \
-	          SOURCE_DIR=$(APPS_ROOT_DIR)/science/shared/source/vector_space
+	          SOURCE_DIR=$(APPS_ROOT_DIR)/science/shared/source
 	$Q$(MAKE) $(QUIET_ARG) -f $(LFRIC_BUILD)/psyclone/psyclone.mk \
 	          SOURCE_DIR=$(PROJECT_SOURCE) \
 	          OPTIMISATION_PATH=$(OPTIMISATION_PATH)
