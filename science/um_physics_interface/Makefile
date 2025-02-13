@@ -97,9 +97,10 @@ create_rose-meta: rose-meta/$(PROJECT_NAME)/HEAD/rose-meta.conf
 rose-meta/$(PROJECT_NAME)/HEAD/rose-meta.conf:
 	$(call MESSAGE, Creating, $@)
 	$(Q)mkdir -p $(dir $@)
-	$(Q)for meta_file in $(addprefix science/$(PROJECT_NAME)/,$(addsuffix $(META_VN), \
-	$(dir $(wildcard rose-meta/*/.)))); \
-	do echo import\=$${meta_file} >> $@; done
+	${Q}for meta_file in ./rose-meta/* ; \
+	      do echo import\=$${meta_file##*/}/${META_VN} >> $@ ; \
+	    done
+
 
 ##############################################################################
 # Clean

@@ -10,7 +10,7 @@ set -e
 TOOLS_DIR=$LFRIC_CORE_DIR/infrastructure/build/tools
 
 # Run rose_picker to generate rose-meta.json and config_namelists.txt
-rose_picker $LFRIC_APPS_DIR/science/gungho/rose-meta/lfric-gungho/HEAD/rose-meta.conf -include_dirs $LFRIC_APPS_DIR -include_dirs $LFRIC_CORE_DIR
+rose_picker $SOURCE_ROOT/apps/rose-meta/lfric-gungho/HEAD/rose-meta.conf -include_dirs $SOURCE_ROOT/apps/rose-meta -include_dirs $SOURCE_ROOT/core/rose-meta
 
 # Run "GenerateNamelist". This takes a rose-meta.json. This produces the *_config_mod.F90 files
 echo $TOOLS_DIR/GenerateNamelist rose-meta.json -directory LFRIC_CORE_DIR

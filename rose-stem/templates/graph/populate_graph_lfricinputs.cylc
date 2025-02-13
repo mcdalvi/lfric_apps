@@ -19,6 +19,15 @@
                       task_ns.compiler~"_"~
                       task_ns.extras %}
 
+{# Set export source task #}
+{% set export_task = "export-source => export-source_"~task_ns.platform %}
+{% if "export-source" not in tasks_to_run %}
+    {% do tasks_to_run.update({"export-source": {} }) %}
+{% endif %}
+{% if "export-source_"~task_ns.platform not in tasks_to_run %}
+    {% do tasks_to_run.update({"export-source_"~task_ns.platform: {} }) %}
+{% endif %}
+
 {# Set task_names and populate tasks_to_run #}
 {% set build_task = "fcm_make_"~build_string %}
 {% if build_task not in tasks_to_run %}
@@ -103,15 +112,6 @@
 {% endif %}
 
 {% if create_mesh %}
-    {# Set export source task #}
-    {% set export_task = "export-source => export-source_"~task_ns.platform %}
-    {% if "export-source" not in tasks_to_run %}
-        {% do tasks_to_run.update({"export-source": {} }) %}
-    {% endif %}
-    {% if "export-source_"~task_ns.platform not in tasks_to_run %}
-        {% do tasks_to_run.update({"export-source_"~task_ns.platform: {} }) %}
-    {% endif %}
-
     {# Set mesh build task #}
     {% set mesh_build_task = "build_mesh_"~
                              task_ns.platform~"_"~
@@ -195,6 +195,9 @@
     ]) %}
 {% do graph_sections.append([
     build_task, configurate_task
+    ]) %}
+{% do graph_sections.append([
+    export_task, configurate_task
     ]) %}
 {% do graph_sections.append([
     configurate_task, psyclone_task
