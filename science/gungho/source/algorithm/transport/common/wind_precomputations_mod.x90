@@ -228,8 +228,8 @@ contains
     allocate( self%num_mol_3d_substeps( num_meshes ) )
 
     ! MoL variables for prime/shifted mesh and splitting type
-    allocate( self%max_courant_hori( num_meshes, num_meshes ) )
-    allocate( self%max_courant_vert( num_meshes, num_meshes ) )
+    allocate( self%max_courant_hori( num_meshes, num_fractions ) )
+    allocate( self%max_courant_vert( num_meshes, num_fractions ) )
     allocate( self%num_mol_hori_substeps( num_meshes, num_fractions ) )
     allocate( self%num_mol_vert_substeps( num_meshes, num_fractions ) )
     allocate( self%courant_computed( num_meshes ) )
