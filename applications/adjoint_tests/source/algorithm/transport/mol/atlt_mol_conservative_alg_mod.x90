@@ -112,7 +112,6 @@ module atlt_mol_conservative_alg_mod
     real(kind=r_def),    parameter :: overall_tolerance = 1500.0_r_def
     real(kind=r_def)               :: machine_tol
     real(kind=r_def)               :: relative_diff
-    integer(kind=i_def), parameter :: outer = 1_i_def
 
     mesh_id = mesh % get_id()
     call setup_test_tl_transport_controller( mesh, model_clock, tl_transport_controller, tctr_field_n, tctr_field_n_vs )

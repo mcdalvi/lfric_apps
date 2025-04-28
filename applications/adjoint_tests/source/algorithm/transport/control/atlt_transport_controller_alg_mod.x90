@@ -33,8 +33,8 @@ module atlt_transport_controller_alg_mod
 
   implicit none
 
-  private
-  public :: atlt_transport_controller_initialiser_alg
+  private :: run_atlt_transport_ctrl_init_alg
+  public  :: atlt_transport_controller_initialiser_alg
 
   contains
 
@@ -47,34 +47,100 @@ module atlt_transport_controller_alg_mod
   !> @param[in]  model_clock  The model clock
   subroutine atlt_transport_controller_initialiser_alg( mesh, model_clock )
 
-    use tl_transport_controller_mod,  only : tl_transport_controller_type
-    use atl_transport_controller_mod, only : atl_transport_controller_initialiser
-
     implicit none
 
     ! Arguments
     type(mesh_type), pointer, intent(in) :: mesh
     type(model_clock_type),   intent(in) :: model_clock
 
-    ! Arguments for tl and adj calls
-    type(tl_transport_controller_type)   :: tl_transport_controller
-    type(field_type)                     :: ref_field_rdef
+    ! Passive arguments for tl and adj calls
     type(field_type)                     :: ls_ref_field_rdef
-    type(field_type)                     :: wind_n_rdef
-    type(field_type)                     :: wind_np1_rdef
     type(field_type)                     :: ls_wind_n_rdef
     type(field_type)                     :: ls_wind_np1_rdef
     integer(kind=i_def)                  :: outer
     logical(kind=l_def)                  :: cheap_update_step
 
+    ! Variables for initialising fields
+    type(function_space_type), pointer :: vector_space_w2_ptr
+    type(function_space_type), pointer :: vector_space_w3_ptr
+
+    ! Initialising fields
+    vector_space_w2_ptr => function_space_collection % get_fs(                 &
+        mesh, element_order_h, element_order_v, W2                             &
+    )
+
+    vector_space_w3_ptr => function_space_collection % get_fs(                 &
+        mesh, element_order_h, element_order_v, W3                             &
+    )
+
+    call ls_ref_field_rdef % initialise( vector_space = vector_space_w3_ptr )
+    call ls_wind_n_rdef % initialise( vector_space = vector_space_w2_ptr )
+    call ls_wind_np1_rdef % initialise( vector_space = vector_space_w2_ptr )
+
+    ! Initialise values
+    call invoke( setval_random( ls_ref_field_rdef ),             &
+                 setval_random( ls_wind_n_rdef ),                &
+                 setval_random( ls_wind_np1_rdef ) )
+    cheap_update_step = .false._l_def
+
+    do outer = 1_i_def, 2_i_def
+      call run_atlt_transport_ctrl_init_alg( vector_space_w2_ptr, &
+                                             vector_space_w3_ptr, &
+                                             ls_ref_field_rdef,   &
+                                             ls_wind_n_rdef,      &
+                                             ls_wind_np1_rdef,    &
+                                             model_clock,         &
+                                             outer,               &
+                                             cheap_update_step )
+    end do
+
+  end subroutine atlt_transport_controller_initialiser_alg
+
+  !=============================================================================
+  !> @brief Runs the adjoint test for atl_transport_controller_initialiser for a given set of parameters
+  !> @param[in]  vector_space_w2_ptr  W2 function space pointer
+  !> @param[in]  vector_space_w3_ptr  W3 function space pointer
+  !> @param[in]  ls_ref_field_rdef    The LS reference field at rdef precision
+  !> @param[in]  ls_wind_n_rdef       The LS wind field at timestep n and rdef precision
+  !> @param[in]  ls_wind_np1_rdef     The LS wind field at timestep n + 1 and rdef precision
+  !> @param[in]  model_clock          The model clock
+  !> @param[in]  outer                The outer iteration variable
+  !> @param[in]  cheap_update_step    Boolean to determine whether or not to do cheap update
+  !>
+  subroutine run_atlt_transport_ctrl_init_alg( vector_space_w2_ptr, &
+                                               vector_space_w3_ptr, &
+                                               ls_ref_field_rdef,   &
+                                               ls_wind_n_rdef,      &
+                                               ls_wind_np1_rdef,    &
+                                               model_clock,         &
+                                               outer,               &
+                                               cheap_update_step )
+
+    use tl_transport_controller_mod,  only : tl_transport_controller_type
+    use atl_transport_controller_mod, only : atl_transport_controller_initialiser
+
+    implicit none
+
+    ! Arguments
+    type(function_space_type), pointer, intent(in) :: vector_space_w2_ptr
+    type(function_space_type), pointer, intent(in) :: vector_space_w3_ptr
+    type(field_type),                   intent(in) :: ls_ref_field_rdef
+    type(field_type),                   intent(in) :: ls_wind_n_rdef
+    type(field_type),                   intent(in) :: ls_wind_np1_rdef
+    type(model_clock_type),             intent(in) :: model_clock
+    integer(kind=i_def),                intent(in) :: outer
+    logical(kind=l_def),                intent(in) :: cheap_update_step
+
+    ! Active arguments for tl and adj calls
+    type(tl_transport_controller_type)   :: tl_transport_controller
+    type(field_type)                     :: ref_field_rdef
+    type(field_type)                     :: wind_n_rdef
+    type(field_type)                     :: wind_np1_rdef
+
     ! Copies of input fields used in inner products
     type(field_type)                     :: ref_field_rdef_inp
     type(field_type)                     :: wind_n_rdef_inp
     type(field_type)                     :: wind_np1_rdef_inp
-
-    ! Variables for initialising fields
-    type(function_space_type), pointer :: vector_space_w2_ptr
-    type(function_space_type), pointer :: vector_space_w3_ptr
 
     ! Variables relating to member variables for transport_controllers
     type(transport_controller_type), pointer :: ls_wind_pert_rho_controller
@@ -103,38 +169,20 @@ module atlt_transport_controller_alg_mod
     real(kind=r_def)            :: machine_tol
     real(kind=r_def)            :: relative_diff
 
-    ! Initialising fields
-    vector_space_w2_ptr => function_space_collection % get_fs(                 &
-        mesh, element_order_h, element_order_v, W2                             &
-    )
-
-    vector_space_w3_ptr => function_space_collection % get_fs(                 &
-        mesh, element_order_h, element_order_v, W3                             &
-    )
-
     call ref_field_rdef % initialise( vector_space = vector_space_w3_ptr )
-    call ls_ref_field_rdef % initialise( vector_space = vector_space_w3_ptr )
     call wind_n_rdef % initialise( vector_space = vector_space_w2_ptr )
     call wind_np1_rdef % initialise( vector_space = vector_space_w2_ptr )
-    call ls_wind_n_rdef % initialise( vector_space = vector_space_w2_ptr )
-    call ls_wind_np1_rdef % initialise( vector_space = vector_space_w2_ptr )
 
     call ref_field_rdef % copy_field_properties( ref_field_rdef_inp )
     call wind_n_rdef % copy_field_properties( wind_n_rdef_inp )
     call wind_np1_rdef % copy_field_properties( wind_np1_rdef_inp )
 
-    ! Initialise values
     call invoke( setval_random( ref_field_rdef ),                &
                  setval_X( ref_field_rdef_inp, ref_field_rdef ), &
-                 setval_random( ls_ref_field_rdef ),             &
                  setval_random( wind_n_rdef ),                   &
                  setval_X( wind_n_rdef_inp, wind_n_rdef ),       &
                  setval_random( wind_np1_rdef ),                 &
-                 setval_X( wind_np1_rdef_inp, wind_np1_rdef ),   &
-                 setval_random( ls_wind_n_rdef ),                &
-                 setval_random( ls_wind_np1_rdef ) )
-    outer = 1_i_def
-    cheap_update_step = .false._l_def
+                 setval_X( wind_np1_rdef_inp, wind_np1_rdef ) )
 
     ! Initialise tl_transport_controller object
     call tl_transport_controller%initialise( model_clock, ref_field_rdef, ls_ref_field_rdef, &
@@ -214,13 +262,15 @@ module atlt_transport_controller_alg_mod
     machine_tol = spacing( max( abs( inner1 ), abs( inner2 ) ) )
     relative_diff = abs( inner1 - inner2 ) / machine_tol
     if ( relative_diff < overall_tolerance ) then
-      write( log_scratch_space, * ) "PASSED tl_transport_controller_initialiser:", inner1, inner2, relative_diff
+      write( log_scratch_space, * ) "PASSED tl_transport_controller_initialiser (outer = ", outer , "):", &
+                                    inner1, inner2, relative_diff
       call log_event( log_scratch_space, LOG_LEVEL_INFO )
     else
-      write( log_scratch_space, * ) "FAILED tl_transport_controller_initialiser:", inner1, inner2, relative_diff
+      write( log_scratch_space, * ) "FAILED tl_transport_controller_initialiser (outer = ", outer, "):", &
+                                    inner1, inner2, relative_diff
       call log_event( log_scratch_space, LOG_LEVEL_ERROR )
     end if
 
-  end subroutine atlt_transport_controller_initialiser_alg
+  end subroutine run_atlt_transport_ctrl_init_alg
 
 end module atlt_transport_controller_alg_mod
