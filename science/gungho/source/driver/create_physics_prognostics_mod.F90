@@ -179,13 +179,7 @@ contains
     call processor%apply(make_spec('wetrho_in_wth', main%derived, Wtheta))
     call processor%apply(make_spec('exner_in_wth', main%derived, Wtheta))
     call processor%apply(make_spec('exner_wth_n', main%derived, Wtheta))
-
-    if ( boundary_layer == boundary_layer_um .or.                              &
-         convection     == convection_um ) then
-
-      call processor%apply(make_spec('theta_star', main%derived, Wtheta))
-
-    end if
+    call processor%apply(make_spec('theta_star', main%derived, Wtheta))
 
     if ( boundary_layer == boundary_layer_um .or.                              &
          convection     == convection_um     .or.                              &
@@ -214,15 +208,6 @@ contains
     call processor%apply(make_spec('w_in_w3', main%derived, W3))
     call processor%apply(make_spec('theta_in_w3', main%derived, W3))
     call processor%apply(make_spec('wetrho_in_w3', main%derived, W3))
-
-    if ( boundary_layer               == boundary_layer_um .or.                &
-         convection                   == convection_um     .or.                &
-         stochastic_physics_placement == stochastic_physics_placement_fast ) then
-
-      call processor%apply(make_spec('u_in_w3_star', main%derived, W3))
-      call processor%apply(make_spec('v_in_w3_star', main%derived, W3))
-
-    end if
 
     if ( wind_forcing == wind_forcing_nudging ) then
       call processor%apply(make_spec(                                          &
@@ -1678,55 +1663,72 @@ contains
 
     ! Aitken soluble mode number mixing ratio
     call processor%apply(make_spec('n_ait_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),                 &
+        ckp=checkpoint_flag))
     ! Aitken soluble H2SO4 aerosol mmr
     call processor%apply(make_spec('ait_sol_su', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,  &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),                 &
+        ckp=checkpoint_flag))
     ! Aitken soluble black carbon aerosol mmr
     call processor%apply(make_spec('ait_sol_bc', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,  &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),                 &
+        ckp=checkpoint_flag))
     ! Aitken soluble organic carbon aerosol mmr
     call processor%apply(make_spec('ait_sol_om', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,  &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),                 &
+        ckp=checkpoint_flag))
     ! Accumulation soluble mode number mixing ratio
     call processor%apply(make_spec('n_acc_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),                 &
+        ckp=checkpoint_flag))
     ! Accumulation soluble H2SO4 aerosol mmr
     call processor%apply(make_spec('acc_sol_su', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,  &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),                 &
+        ckp=checkpoint_flag))
     ! Accumulation soluble black carbon aerosol mmr
     call processor%apply(make_spec('acc_sol_bc', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,  &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),                 &
+        ckp=checkpoint_flag))
     ! Accumulation soluble organic carbon aerosol mmr
     call processor%apply(make_spec('acc_sol_om', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,  &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),                 &
+        ckp=checkpoint_flag))
     ! Accumulation soluble sea salt aerosol mmr
     call processor%apply(make_spec('acc_sol_ss', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,  &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),                 & 
+        ckp=checkpoint_flag))
     ! Coarse soluble mode number mixing ratio
     call processor%apply(make_spec('n_cor_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol, &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),               &
+        ckp=checkpoint_flag))
     ! Coarse soluble H2SO4 aerosol mmr
     call processor%apply(make_spec('cor_sol_su', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,  &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),                 &
+        ckp=checkpoint_flag))
     ! Coarse soluble black carbon aerosol mmr
     call processor%apply(make_spec('cor_sol_bc', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,  &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),                 &
+        ckp=checkpoint_flag))
     ! Coarse soluble organic carbon aerosol mmr
     call processor%apply(make_spec('cor_sol_om', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,  &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),                 &
+        ckp=checkpoint_flag))
     ! Coarse soluble sea salt aerosol mmr
     call processor%apply(make_spec('cor_sol_ss', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,  &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),                 &
+        ckp=checkpoint_flag))
     ! Aitken insoluble mode number mixing ratio
     call processor%apply(make_spec('n_ait_ins', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),                 &
+        ckp=checkpoint_flag))
     ! Aitken insoluble black carbon aerosol mmr
     call processor%apply(make_spec('ait_ins_bc', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,  &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),                 &
+        ckp=checkpoint_flag))
     ! Aitken insoluble organic carbon aerosol mmr
     call processor%apply(make_spec('ait_ins_om', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,  &
-        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con), ckp=checkpoint_flag))
+        coarse_mesh_name=mesh_name, adv_coll=if_adv(advection_flag, adv%last_con),                 &
+        ckp=checkpoint_flag))
     ! Accumulation insoluble mode number mixing ratio
     call processor%apply(make_spec('n_acc_ins', main%aerosol, Wtheta, coarse=.false.,   &
         adv_coll=if_adv(advection_flag_dust, adv%last_con), ckp=checkpoint_flag))
@@ -1760,104 +1762,104 @@ contains
         end if
 
         ! Dry diameter Aitken mode (Soluble)
-        call processor%apply(make_spec('drydp_ait_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('drydp_ait_sol', main%aerosol, Wtheta,   &
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Dry diameter Accumulation mode (Soluble)
-        call processor%apply(make_spec('drydp_acc_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('drydp_acc_sol', main%aerosol, Wtheta,   &
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Dry diameter Coarse mode (Soluble)
-        call processor%apply(make_spec('drydp_cor_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('drydp_cor_sol', main%aerosol, Wtheta,   &
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Dry diameter Aitken mode (Insoluble)
-        call processor%apply(make_spec('drydp_ait_ins', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('drydp_ait_ins', main%aerosol, Wtheta,   &
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Dry diameter Accumulation mode (Insoluble)
-        call processor%apply(make_spec('drydp_acc_ins', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('drydp_acc_ins', main%aerosol, Wtheta,   &
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Dry diameter Coarse mode (Insoluble)
-        call processor%apply(make_spec('drydp_cor_ins', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('drydp_cor_ins', main%aerosol, Wtheta,   &
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Wet diameter Aitken mode (Soluble)
-        call processor%apply(make_spec('wetdp_ait_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('wetdp_ait_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Wet diameter Accumulation mode (Soluble)
-        call processor%apply(make_spec('wetdp_acc_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('wetdp_acc_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Wet diameter Coarse mode (Soluble)
-        call processor%apply(make_spec('wetdp_cor_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('wetdp_cor_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Particle density Aitken mode (Soluble)
-        call processor%apply(make_spec('rhopar_ait_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('rhopar_ait_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Particle density Accumulation mode (Soluble)
-        call processor%apply(make_spec('rhopar_acc_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('rhopar_acc_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Particle density Coarse mode (Soluble)
-        call processor%apply(make_spec('rhopar_cor_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('rhopar_cor_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Particle density Aitken mode (Insoluble)
-        call processor%apply(make_spec('rhopar_ait_ins', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('rhopar_ait_ins', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Particle density Accumulation mode (Insoluble)
-        call processor%apply(make_spec('rhopar_acc_ins', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('rhopar_acc_ins', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Particle density Coarse mode (Insoluble)
-        call processor%apply(make_spec('rhopar_cor_ins', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('rhopar_cor_ins', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume of water Aitken mode (Soluble)
-        call processor%apply(make_spec('pvol_wat_ait_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_wat_ait_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume of water Accumulation mode (Soluble)
-        call processor%apply(make_spec('pvol_wat_acc_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_wat_acc_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume of water Coarse mode (Soluble)
-        call processor%apply(make_spec('pvol_wat_cor_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_wat_cor_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume component Sulphate Aitken mode (Soluble)
-        call processor%apply(make_spec('pvol_su_ait_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_su_ait_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume component Black Carbon Aitken mode (Soluble)
-        call processor%apply(make_spec('pvol_bc_ait_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_bc_ait_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume component Organic Matter Aitken mode (Soluble)
-        call processor%apply(make_spec('pvol_om_ait_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_om_ait_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume component Sulphate Accumulation mode (Soluble)
-        call processor%apply(make_spec('pvol_su_acc_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_su_acc_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume component Black Carbon Accumulation mode (Soluble)
-        call processor%apply(make_spec('pvol_bc_acc_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_bc_acc_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume component Organic Matter Accumulation mode (Soluble)
-        call processor%apply(make_spec('pvol_om_acc_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_om_acc_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume component Sea Salt Accumulation mode (Soluble)
-        call processor%apply(make_spec('pvol_ss_acc_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_ss_acc_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume component Sulphate Coarse mode (Soluble)
-        call processor%apply(make_spec('pvol_su_cor_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_su_cor_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume component Black Carbon Coarse mode (Soluble)
-        call processor%apply(make_spec('pvol_bc_cor_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_bc_cor_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume component Organic Matter Coarse mode (Soluble)
-        call processor%apply(make_spec('pvol_om_cor_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_om_cor_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume component Sea Salt Coarse mode (Soluble)
-        call processor%apply(make_spec('pvol_ss_cor_sol', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_ss_cor_sol', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume component Black Carbon Aitken mode (Insoluble)
-        call processor%apply(make_spec('pvol_bc_ait_ins', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_bc_ait_ins', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume component Organic Matter Aitken mode (Insoluble)
-        call processor%apply(make_spec('pvol_om_ait_ins', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_om_ait_ins', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume component Dust Accumulation mode (Insoluble)
-        call processor%apply(make_spec('pvol_du_acc_ins', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_du_acc_ins', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
         ! Partial volume component Dust Coarse mode (Insoluble)
-        call processor%apply(make_spec('pvol_du_cor_ins', main%aerosol, Wtheta, coarse=coarse_rad_aerosol,   &
-            coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
+        call processor%apply(make_spec('pvol_du_cor_ins', main%aerosol, Wtheta,   & 
+            coarse=coarse_rad_aerosol, coarse_mesh_name=mesh_name, ckp=checkpoint_flag))
     end if
 
     ! Fields on dust space, might need checkpointing

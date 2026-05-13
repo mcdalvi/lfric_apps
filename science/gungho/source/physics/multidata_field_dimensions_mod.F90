@@ -62,6 +62,7 @@ module multidata_field_dimensions_mod
                 'lw_bands_radiation_levels',            &
                 'photolysis_pathways',                  &
                 'random_seed_size',                     &
+                'stph_spectral_dimensions',             &
                 'photol_species',                       &
                 'ecmwf_levels'                          &
       ]
@@ -156,6 +157,7 @@ end subroutine sync_multidata_field_dimensions
                                        topography_horizon, &
                                        n_horiz_layer,      &
                                        n_horiz_ang
+    use stochastic_physics_config_mod, only: stph_spectral_dim
     use section_choice_config_mod, &
                                  only: radiation,                              &
                                        radiation_socrates,                     &
@@ -269,6 +271,8 @@ end subroutine sync_multidata_field_dimensions
 
       case('random_seed_size')
            call random_seed(size=dim)
+      case('stph_spectral_dimensions')
+           dim = stph_spectral_dim
       case ('photol_species')
             if (chem_scheme == chem_scheme_strattrop) then
                dim = n_phot_spc
