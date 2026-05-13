@@ -142,13 +142,6 @@ contains
     coarse_ozone_ancil   = modeldb%config%initialization%coarse_ozone_ancil()
     init_option          = modeldb%config%initialization%init_option()
 
-    ! Get information on any multi-resolution meshes
-    multires_coupling_nml => &
-        modeldb%configuration%get_namelist('multires_coupling')
-    
-    call multires_coupling_nml%get_value( 'coarse_nudging', &
-                                          coarse_nudging )
-
     ! If aerosol data is on a different mesh, get this
     if (coarse_aerosol_ancil .or. coarse_ozone_ancil) then
       aerosol_mesh_name = modeldb%config%multires_coupling%aerosol_mesh_name()

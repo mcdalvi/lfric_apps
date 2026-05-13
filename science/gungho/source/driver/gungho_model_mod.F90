@@ -272,7 +272,7 @@ contains
     logical(l_def)       :: to_process_nudging_fields
 #ifdef UM_PHYSICS
     integer(i_def) :: i
-#endif    
+#endif
 
     DT = clock%get_seconds_per_step()
     call set_variable("DT", DT, tolerant=.true.)
