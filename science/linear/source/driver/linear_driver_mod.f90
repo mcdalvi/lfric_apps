@@ -166,7 +166,7 @@ contains
         nudging_twod_mesh => mesh_collection%get_mesh(nudging_mesh, TWOD)
         write( log_scratch_space,'(A,A)' ) "nudging mesh name:", nudging_mesh%get_mesh_name()
         call log_event( log_scratch_space, LOG_LEVEL_INFO )
-      end if  
+      end if
     end if
 
     ! Instantiate the fields stored in model_data

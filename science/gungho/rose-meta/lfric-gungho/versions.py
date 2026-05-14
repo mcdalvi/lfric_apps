@@ -158,7 +158,7 @@ class vn31_t474(MacroUpgrade):
         self.add_setting(config, ["namelist:files", "nudging_directory"], "''")
         self.add_setting(config, ["namelist:files", "nudging_filename"], "''")
         self.add_setting(
-            config, ["namelist:multires_coupling", "coarse_nudging"], ".false.,"
+            config, ["namelist:multires_coupling", "coarse_nudging"], ".false.",
         )
         self.add_setting(
             config, ["namelist:multires_coupling", "nudging_mesh_name"], "''"
@@ -170,7 +170,7 @@ class vn31_t474(MacroUpgrade):
         )
         source = re.sub(
             r"(namelist:multires_coupling)",
-            r"(namelist:multires_coupling)" + "\n" + " (namelist:nudging)",
+            r"namelist:multires_coupling)" + "\n" + " (namelist:nudging",
             source,
         )
         self.change_setting_value(
