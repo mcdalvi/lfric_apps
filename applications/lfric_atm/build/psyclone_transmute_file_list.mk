@@ -61,7 +61,7 @@ export PSYCLONE_PASS_NO_SCRIPT = ukca_abdulrazzak_ghan
 # These files will be filtered, and will NOT be run through PSyclone.
 
 # Directories to psyclone
-export PSYCLONE_DIRECTORIES = science/ukca
+export PSYCLONE_DIRECTORIES = 
 
 # A general file exception list
 export PSYCLONE_PHYSICS_EXCEPTION =
