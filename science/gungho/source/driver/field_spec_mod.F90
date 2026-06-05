@@ -37,9 +37,33 @@ module field_spec_mod
   end type main_coll_dict_type
 
   !> @brief Map main collection enumerators to collections.
+  !> Enumerator values need to be unique for each field, and nominally
+  !> within a specific range for each collection type
+  integer(i_def), parameter :: enum_derived = 107
+  integer(i_def), parameter :: enum_radiation = 120
+  integer(i_def), parameter :: enum_microphysics = 129
+  integer(i_def), parameter :: enum_electric = 130
+  integer(i_def), parameter :: enum_orography = 141
+  integer(i_def), parameter :: enum_turbulence = 142
+  integer(i_def), parameter :: enum_convection = 152
+  integer(i_def), parameter :: enum_cloud = 154
+  integer(i_def), parameter :: enum_surface = 160
+  integer(i_def), parameter :: enum_soil = 190
+  integer(i_def), parameter :: enum_snow = 191
+  integer(i_def), parameter :: enum_chemistry = 222
+  integer(i_def), parameter :: enum_aerosol = 238
+  integer(i_def), parameter :: enum_stph = 241
+  integer(i_def), parameter :: enum_lbc = 252
+  integer(i_def), parameter :: enum_none = 279
+  
   type(main_coll_dict_type), parameter :: main_coll_dict &
     = main_coll_dict_type( &
-    107,120,129,130,141,142,152,154,160,190,191,222,238,241,252,279)
+      enum_derived, enum_radiation, enum_microphysics,     &
+      enum_electric, enum_orography, enum_turbulence,      &
+      enum_convection, enum_cloud, enum_surface, enum_soil, &
+      enum_snow, enum_chemistry, enum_aerosol, enum_stph,  &
+      enum_lbc, enum_none                                  &
+     )
 
   !> @brief Dictionary of advected field collections
   type :: adv_coll_dict_type
