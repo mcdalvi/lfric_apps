@@ -24,9 +24,8 @@ module gungho_driver_mod
                                           finalise_model_data
   use driver_modeldb_mod,          only : modeldb_type
   use external_forcing_config_mod, only : theta_forcing_nudging,               &
-                                          theta_forcing,                       &
                                           wind_forcing_nudging,                &
-                                          wind_forcing
+                                          external_forcing_is_loaded
   use gungho_model_mod,            only : initialise_infrastructure, &
                                           initialise_model, &
                                           finalise_infrastructure, &
@@ -59,10 +58,6 @@ module gungho_driver_mod
                                           log_scratch_space
   use mesh_mod,                    only : mesh_type
   use mesh_collection_mod,         only : mesh_collection
-  use multires_coupling_config_mod, &
-                                  only : aerosol_mesh_name, &
-                                         nudging_mesh_name, &
-                                         coarse_nudging
   use remove_field_collection_mod, only : remove_field_collection
   use section_choice_config_mod,   only : iau,                   &
                                           iau_sst,               &
@@ -152,6 +147,11 @@ contains
     real(r_def), allocatable :: real_array(:)
     integer(tik)   :: id
 
+    logical(l_def) :: use_multires_coupling
+    logical(l_def) :: coarse_nudging
+    character(str_def) :: aerosol_mesh_name
+    character(str_def) :: nudging_mesh_name
+
 #ifdef UM_PHYSICS
     integer(i_def) :: i
     type(io_value_type) :: spt_arrays(spt_array_count)
@@ -178,9 +178,12 @@ contains
     twod_mesh => mesh_collection%get_mesh(mesh, TWOD)
 
     ! If aerosol data is on a different mesh, get this
-    if (coarse_aerosol_ancil .or. coarse_ozone_ancil) then
+    use_multires_coupling = modeldb%config%formulation%use_multires_coupling()
+    if ( use_multires_coupling .and. &
+         (coarse_aerosol_ancil .or. coarse_ozone_ancil) ) then
       ! For now use the coarsest mesh
-      aerosol_mesh => mesh_collection%get_mesh(aerosol_mesh_name)
+      aerosol_mesh_name = modeldb%config%multires_coupling%aerosol_mesh_name()
+      aerosol_mesh => mesh_collection%get_mesh(trim(adjustl(aerosol_mesh_name)))
       aerosol_twod_mesh => mesh_collection%get_mesh(aerosol_mesh, TWOD)
     else
       aerosol_mesh => mesh
@@ -188,8 +191,13 @@ contains
     end if
 
     ! If nudging is on a different mesh, get this
+    coarse_nudging = .false.
+    if ( use_multires_coupling )   &
+      coarse_nudging = modeldb%config%multires_coupling%coarse_nudging()
+
     if (coarse_nudging) then
-      nudging_mesh => mesh_collection%get_mesh(nudging_mesh_name)
+      nudging_mesh_name = modeldb%config%multires_coupling%nudging_mesh_name()
+      nudging_mesh => mesh_collection%get_mesh(trim(adjustl(nudging_mesh_name)))
       nudging_twod_mesh => mesh_collection%get_mesh(nudging_mesh, TWOD)
     else
       nudging_mesh => mesh
@@ -368,6 +376,9 @@ contains
     type( field_collection_type ), pointer :: ancil_fields
 #endif
 
+    integer(i_def) :: theta_forcing
+    integer(i_def) :: wind_forcing
+
     read(timestep_start,*,iostat=rc)  ts_start
     if ( LPROF ) then
       if ( modeldb%clock%get_step() == ts_start ) then
@@ -444,13 +455,18 @@ contains
                                  modeldb%clock, lbc_fields )
     endif
 
-    ! Spectral nudging update
-    if ( theta_forcing == theta_forcing_nudging                                &
-        .or. wind_forcing == wind_forcing_nudging) then
-      derived_fields => modeldb%fields%get_field_collection("derived_fields")
-      call update_variable_fields(                                             &
+    ! Nudging update. Check that external_forcing namelist is active
+    if ( external_forcing_is_loaded() ) then
+      theta_forcing = modeldb%config%external_forcing%theta_forcing()
+      wind_forcing = modeldb%config%external_forcing%wind_forcing()
+
+      if ( theta_forcing == theta_forcing_nudging                              &
+          .or. wind_forcing == wind_forcing_nudging) then
+        derived_fields => modeldb%fields%get_field_collection("derived_fields")
+        call update_variable_fields(                                           &
             model_axes%nudging_times_list, modeldb%clock, derived_fields       &
-      )
+        )
+      end if
     end if
 
 #ifdef UM_PHYSICS

@@ -90,7 +90,8 @@ module gungho_init_fields_mod
   use ageofair_alg_mod,                   only : init_ageofair
   use transport_config_mod,               only : transport_ageofair
   use external_forcing_config_mod,        only : theta_forcing_nudging,        &
-                                                 wind_forcing_nudging
+                                                 wind_forcing_nudging,         &
+                                                 external_forcing_is_loaded
 #ifdef COUPLED
   use coupler_mod,                      only : zero_coupling_send_fields
 #endif
@@ -513,15 +514,17 @@ subroutine create_model_data( modeldb,           &
                                        depository,                           &
                                        prognostic_fields, &
                                        modeldb )
+    ! Setup fields for nudging, if external forcing is specified
+    if ( external_forcing_is_loaded() ) then
+      theta_forcing = modeldb%config%external_forcing%theta_forcing()
+      wind_forcing = modeldb%config%external_forcing%wind_forcing()
 
-    theta_forcing = modeldb%config%external_forcing%theta_forcing()
-    wind_forcing = modeldb%config%external_forcing%wind_forcing()
-
-    if ( wind_forcing == wind_forcing_nudging .or.                             &
-         theta_forcing == theta_forcing_nudging ) then
-      call create_nudging_fields(                                              &
-          modeldb, nudging_mesh, nudging_twod_mesh, field_mapper               &
-      )
+      if ( wind_forcing == wind_forcing_nudging .or.                           &
+           theta_forcing == theta_forcing_nudging ) then
+        call create_nudging_fields(                                            &
+           modeldb, nudging_mesh, nudging_twod_mesh, field_mapper              &
+        )
+      end if
     end if
 
     ! Create prognostics used by physics
@@ -881,16 +884,18 @@ subroutine create_model_data( modeldb,           &
                                   derived_fields)
 
 
-      ! Initialise reading of nudging fields
-      theta_forcing = modeldb%config%external_forcing%theta_forcing()
-      wind_forcing = modeldb%config%external_forcing%wind_forcing()
+      ! Initialise reading of nudging fields, if external forcing is specified
+      if ( external_forcing_is_loaded() ) then
+        theta_forcing = modeldb%config%external_forcing%theta_forcing()
+        wind_forcing = modeldb%config%external_forcing%wind_forcing()
 
-      if ( wind_forcing == wind_forcing_nudging .or.                           &
-          theta_forcing == theta_forcing_nudging ) then
-        ! Initialise time interpolation
-        call init_variable_fields(                                             &
+        if ( wind_forcing == wind_forcing_nudging .or.                         &
+             theta_forcing == theta_forcing_nudging ) then
+          ! Initialise time interpolation
+          call init_variable_fields(                                           &
             model_axes%nudging_times_list, modeldb%clock, derived_fields       &
-        )
+          )
+        end if
       end if
 
 #ifdef UM_PHYSICS
