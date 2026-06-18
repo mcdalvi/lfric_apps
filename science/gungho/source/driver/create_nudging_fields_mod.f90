@@ -7,7 +7,7 @@
 module create_nudging_fields_mod
 
   use clock_mod,                   only : clock_type
-  use constants_mod,               only : i_def, l_def, str_def
+  use constants_mod,               only : i_def, l_def, str_def, EMDI
   use driver_modeldb_mod,          only : modeldb_type
   use field_mod,                   only : field_type
   use field_collection_mod,        only : field_collection_type
@@ -21,9 +21,8 @@ module create_nudging_fields_mod
   use mesh_mod,                    only : mesh_type
 
   use external_forcing_config_mod, only : theta_forcing_nudging,               &
-                                          theta_forcing,                       &
                                           wind_forcing_nudging,                &
-                                          wind_forcing
+                                          external_forcing_is_loaded
 
   implicit none
 
@@ -57,7 +56,7 @@ module create_nudging_fields_mod
 
     call creator%init(mesh, twod_mesh, mapper, modeldb%clock)
 
-    call process_nudging_fields(creator)
+    call process_nudging_fields(modeldb, creator)
 
     call gungho_axes%save_nudging_time_axis()
 
@@ -65,19 +64,37 @@ module create_nudging_fields_mod
 
   !> @brief Iterate over active nudging fields and apply an arbitrary
   !! processor to the field specifiers.
+  !> @param        modeldb     Database for current configuration
   !> @param        processor   Processor to be applied to field specifiers
-  subroutine process_nudging_fields(processor)
+  subroutine process_nudging_fields(modeldb, processor)
     use field_spec_mod,                only : main => main_coll_dict,          &
                                               axis => time_axis_dict,          &
                                               processor_type,                  &
                                               make_spec
-
-    use multires_coupling_config_mod, only: coarse_nudging,                    &
-                                            nudging_mesh_name
-
     implicit none
 
+    type(modeldb_type),  intent(in)  :: modeldb
     class(processor_type)            :: processor
+
+    logical(l_def)                   :: coarse_nudging
+    character(str_def)               :: nudging_mesh_name
+    integer(i_def)                   :: theta_forcing
+    integer(i_def)                   :: wind_forcing
+
+    if ( modeldb%config%formulation%use_multires_coupling() ) then
+      coarse_nudging = modeldb%config%multires_coupling%coarse_nudging()
+      nudging_mesh_name = modeldb%config%multires_coupling%nudging_mesh_name()
+    else
+      coarse_nudging = .false.
+    end if
+
+    if ( external_forcing_is_loaded() ) then
+      theta_forcing = modeldb%config%external_forcing%theta_forcing()
+      wind_forcing = modeldb%config%external_forcing%wind_forcing()
+    else
+      theta_forcing = EMDI
+      wind_forcing = EMDI
+    end if
 
     !------ Fields updated directly from nudging file-----------------
 

@@ -247,16 +247,15 @@ contains
 
   !> @brief Enable active state fields for checkpointing; sync xios axis dimensions;
   !>        set up scaled diagnostics fields
-  !> @param[in] clock        The clock providing access to time information
-  subroutine before_context_close(clock)
+  !> @param[in] modeldb   The database providing access to model information
+  subroutine before_context_close(modeldb)
 
     use multidata_field_dimensions_mod, only: sync_multidata_field_dimensions
     use time_dimensions_mod,            only: sync_time_dimensions
     use boundaries_config_mod,          only: limited_area
-    use external_forcing_config_mod,    only: theta_forcing,                   &
-                                              theta_forcing_nudging,           &
-                                              wind_forcing,                    &
-                                              wind_forcing_nudging
+    use external_forcing_config_mod,    only: theta_forcing_nudging,           &
+                                              wind_forcing_nudging,            &
+                                              external_forcing_is_loaded
     use formulation_config_mod,         only: use_physics
     use section_choice_config_mod,      only: stochastic_physics, &
                                               stochastic_physics_um
@@ -265,22 +264,30 @@ contains
     use io_config_mod,                  only: checkpoint_read, checkpoint_write
 
     implicit none
-    class(clock_type), intent(in) :: clock
+    type(modeldb_type), intent(in) :: modeldb
 
     type(persistor_type) :: persistor
     real(r_second)       :: DT
+    integer(i_def)       :: theta_forcing
+    integer(i_def)       :: wind_forcing
     logical(l_def)       :: to_process_nudging_fields
 #ifdef UM_PHYSICS
     integer(i_def) :: i
 #endif
 
-    DT = clock%get_seconds_per_step()
+    DT = modeldb%clock%get_seconds_per_step()
     call set_variable("DT", DT, tolerant=.true.)
 
-    to_process_nudging_fields = ( theta_forcing == theta_forcing_nudging       &
-        .or. wind_forcing == wind_forcing_nudging )
+    if ( external_forcing_is_loaded() ) then
+      theta_forcing = modeldb%config%external_forcing%theta_forcing()
+      wind_forcing = modeldb%config%external_forcing%wind_forcing()
+      to_process_nudging_fields = ( theta_forcing == theta_forcing_nudging     &
+         .or. wind_forcing == wind_forcing_nudging )
+    else
+      to_process_nudging_fields = .false.
+    end if
 
-    call persistor%init(clock)
+    call persistor%init(modeldb%clock)
     call process_gungho_prognostics(persistor)
     ! Add the temperature_correction_rate to the appropriate files
     if(checkpoint_write) then
@@ -409,7 +416,8 @@ contains
     if (limited_area) call process_lbc_fields(persistor)
     if (use_physics) then
       call process_physics_prognostics(persistor)
-      if (to_process_nudging_fields) call process_nudging_fields(persistor)
+      if (to_process_nudging_fields)   &
+         call process_nudging_fields(modeldb,persistor)
       call sync_multidata_field_dimensions()
       call sync_time_dimensions()
     end if
