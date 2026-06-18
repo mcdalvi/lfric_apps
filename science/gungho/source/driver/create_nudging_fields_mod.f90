@@ -7,6 +7,7 @@
 module create_nudging_fields_mod
 
   use clock_mod,                   only : clock_type
+  use config_mod,                  only : config_type
   use constants_mod,               only : i_def, l_def, str_def, EMDI
   use driver_modeldb_mod,          only : modeldb_type
   use field_mod,                   only : field_type
@@ -56,7 +57,7 @@ module create_nudging_fields_mod
 
     call creator%init(mesh, twod_mesh, mapper, modeldb%clock)
 
-    call process_nudging_fields(modeldb, creator)
+    call process_nudging_fields(modeldb%config, creator)
 
     call gungho_axes%save_nudging_time_axis()
 
@@ -64,16 +65,16 @@ module create_nudging_fields_mod
 
   !> @brief Iterate over active nudging fields and apply an arbitrary
   !! processor to the field specifiers.
-  !> @param        modeldb     Database for current configuration
+  !> @param        config      Argument holding model configuration
   !> @param        processor   Processor to be applied to field specifiers
-  subroutine process_nudging_fields(modeldb, processor)
+  subroutine process_nudging_fields(config, processor)
     use field_spec_mod,                only : main => main_coll_dict,          &
                                               axis => time_axis_dict,          &
                                               processor_type,                  &
                                               make_spec
     implicit none
 
-    type(modeldb_type),  intent(in)  :: modeldb
+    type(config_type),  intent(in)   :: config
     class(processor_type)            :: processor
 
     logical(l_def)                   :: coarse_nudging
@@ -81,16 +82,16 @@ module create_nudging_fields_mod
     integer(i_def)                   :: theta_forcing
     integer(i_def)                   :: wind_forcing
 
-    if ( modeldb%config%formulation%use_multires_coupling() ) then
-      coarse_nudging = modeldb%config%multires_coupling%coarse_nudging()
-      nudging_mesh_name = modeldb%config%multires_coupling%nudging_mesh_name()
+    if ( config%formulation%use_multires_coupling() ) then
+      coarse_nudging = config%multires_coupling%coarse_nudging()
+      nudging_mesh_name = config%multires_coupling%nudging_mesh_name()
     else
       coarse_nudging = .false.
     end if
 
     if ( external_forcing_is_loaded() ) then
-      theta_forcing = modeldb%config%external_forcing%theta_forcing()
-      wind_forcing = modeldb%config%external_forcing%wind_forcing()
+      theta_forcing = config%external_forcing%theta_forcing()
+      wind_forcing = config%external_forcing%wind_forcing()
     else
       theta_forcing = EMDI
       wind_forcing = EMDI
