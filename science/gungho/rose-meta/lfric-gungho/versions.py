@@ -805,10 +805,23 @@ class vn31_t394(MacroUpgrade):
 
         return config, self.reports
 
+class vn31_t401(MacroUpgrade):
+    """Upgrade macro for ticket #401 by Dan Copsey."""
+
+    BEFORE_TAG = "vn3.1_t394"
+    AFTER_TAG = "vn3.1_t401"
+
+    def upgrade(self, config, meta_config=None):
+        # Commands From: rose-meta/jules-lsm
+        self.add_setting(
+            config, ["namelist:jules_hydrology", "l_inland"], ".false."
+        )
+
+        return config, self.reports
 class vn31_t474(MacroUpgrade):
     """Upgrade macro for ticket #474 by Mohit Dalvi."""
 
-    BEFORE_TAG = "vn3.1_t394"
+    BEFORE_TAG = "vn3.1_t401"
     AFTER_TAG = "vn3.1_t474"
 
     def upgrade(self, config, meta_config=None):
@@ -845,5 +858,3 @@ class vn31_t474(MacroUpgrade):
             config, ["namelist:nudging", "nudging_width_bottom"], "1"
         )
         self.add_setting(config, ["namelist:nudging", "nudging_width_top"], "0")
-
-        return config, self.reports
