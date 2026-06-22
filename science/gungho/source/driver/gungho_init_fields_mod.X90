@@ -320,12 +320,14 @@ contains
   end subroutine combine_complex_prognostics
 
   !> @brief Create the fields contained in model_data
+  !> @param[out]   field_mapper The type holding field collections
   !> @param[inout] modeldb   The working data set for a model run
   !> @param[in]    mesh      The current 3d mesh
   !> @param[in]    twod_mesh The current 2d mesh
   !> @param[in]    aerosol_mesh      Aerosol 3d mesh
   !> @param[in]    aerosol_twod_mesh Aerosol 2d mesh
-  subroutine create_model_data( modeldb,      &
+  subroutine create_model_data( field_mapper, &
+                                modeldb,      &
                                 mesh,         &
                                 twod_mesh,    &
                                 aerosol_mesh, &
@@ -333,13 +335,12 @@ contains
 
     implicit none
 
+    type(field_mapper_type), intent(out)      :: field_mapper
     type( modeldb_type ), intent(inout)       :: modeldb
     type( mesh_type ),    intent(in), pointer :: mesh
     type( mesh_type ),    intent(in), pointer :: twod_mesh
     type( mesh_type ),    intent(in), pointer :: aerosol_mesh
     type( mesh_type ),    intent(in), pointer :: aerosol_twod_mesh
-
-    type(field_mapper_type), target :: field_mapper
 
     type(field_collection_type), pointer :: depository
     type(field_collection_type), pointer :: moisture_fields
@@ -528,6 +529,7 @@ contains
   !> @brief Create the additional fields contained in model_data that are
   !!        only required by runs that use physics.
   !> @param[inout] modeldb   The working data set for a model run
+  !> @param[in]    field_mapper The type holding field collections
   !> @param[in]    mesh      The current 3d mesh
   !> @param[in]    twod_mesh The current 2d mesh
   !> @param[in]    aerosol_mesh      Aerosol 3d mesh
@@ -535,6 +537,7 @@ contains
   !> @param[in]    nudging_mesh      Nudging 3d mesh
   !> @param[in]    nudging_twod_mesh Nudging 2d mesh
   subroutine create_physics_model_data( modeldb,      &
+                                        field_mapper, &
                                         mesh,         &
                                         twod_mesh,    &
                                         aerosol_mesh, &
@@ -545,6 +548,7 @@ contains
     implicit none
 
     type( modeldb_type ), intent(inout)       :: modeldb
+    type(field_mapper_type), intent(in)       :: field_mapper
     type( mesh_type ),    intent(in), pointer :: mesh
     type( mesh_type ),    intent(in), pointer :: twod_mesh
     type( mesh_type ),    intent(in), pointer :: aerosol_mesh

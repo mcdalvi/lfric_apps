@@ -14,6 +14,7 @@ module gungho_driver_mod
   use derived_config_mod,          only : l_esm_couple
   use extrusion_mod,               only : TWOD
   use field_collection_mod,        only : field_collection_type
+  use field_mapper_mod,            only : field_mapper_type
   use formulation_config_mod,      only : use_multires_coupling
   use gungho_diagnostics_driver_mod, &
                                    only : gungho_diagnostics_driver
@@ -134,6 +135,7 @@ contains
     type(modeldb_type),   intent(inout) :: modeldb
 
     type(gungho_time_axes_type)     :: model_axes
+    type(field_mapper_type)         :: field_mapper
 
     type(mesh_type),        pointer :: mesh              => null()
     type(mesh_type),        pointer :: twod_mesh         => null()
@@ -252,10 +254,12 @@ contains
     end if
 
     ! Instantiate the fields stored in model_data
-    call create_model_data( modeldb,         &
+    call create_model_data( field_mapper,    &
+                            modeldb,         &
                             mesh, twod_mesh, &
                             aerosol_mesh, aerosol_twod_mesh )
     call create_physics_model_data( modeldb, &
+                            field_mapper,    &
                             mesh, twod_mesh, &
                             aerosol_mesh, aerosol_twod_mesh, &
                             nudging_mesh, nudging_twod_mesh )

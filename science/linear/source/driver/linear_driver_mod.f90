@@ -11,6 +11,7 @@ module linear_driver_mod
   use extrusion_mod,              only : TWOD
   use field_array_mod,            only : field_array_type
   use field_mod,                  only : field_type
+  use field_mapper_mod,           only : field_mapper_type
   use field_collection_mod,       only : field_collection_type
   use io_value_mod,               only : io_value_type
   use section_choice_config_mod,  only : stochastic_physics, &
@@ -89,6 +90,8 @@ contains
     type( field_collection_type ), pointer :: depository
     type( field_collection_type ), pointer :: fd_fields
 
+    type(field_mapper_type),    :: field_mapper
+
     character(len=*), parameter :: io_context_name = "gungho_atm"
     integer(i_def) :: random_seed_size
     real(r_def), allocatable :: real_array(:)
@@ -144,7 +147,8 @@ contains
     end if
 
     ! Instantiate the fields stored in model_data
-    call create_model_data( modeldb,      &
+    call create_model_data( field_mapper, &
+                            modeldb,      &
                             mesh,         &
                             twod_mesh,    &
                             aerosol_mesh, &
