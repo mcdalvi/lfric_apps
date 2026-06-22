@@ -11,7 +11,6 @@ module linear_driver_mod
   use extrusion_mod,              only : TWOD
   use field_array_mod,            only : field_array_type
   use field_mod,                  only : field_type
-  use field_mapper_mod,           only : field_mapper_type
   use field_collection_mod,       only : field_collection_type
   use io_value_mod,               only : io_value_type
   use section_choice_config_mod,  only : stochastic_physics, &
@@ -77,11 +76,15 @@ contains
     type( mesh_type ),     pointer :: twod_mesh
     type( mesh_type ),     pointer :: aerosol_mesh
     type( mesh_type ),     pointer :: aerosol_twod_mesh
+    type( mesh_type ),     pointer :: nudging_mesh
+    type( mesh_type ),     pointer :: nudging_twod_mesh
 
     character( len=str_def )       :: prime_mesh_name
     character( len=str_def )       :: aerosol_mesh_name
+    character( len=str_def )       :: nudging_mesh_name
     logical( kind=l_def )          :: coarse_aerosol_ancil
     logical( kind=l_def )          :: coarse_ozone_ancil
+    logical( kind=l_def )          :: coarse_nudging
     integer( kind=i_def )          :: init_option
     logical( kind=l_def )          :: nodal_output_on_w3
 
@@ -90,13 +93,12 @@ contains
     type( field_collection_type ), pointer :: depository
     type( field_collection_type ), pointer :: fd_fields
 
-    type(field_mapper_type),    :: field_mapper
-
     character(len=*), parameter :: io_context_name = "gungho_atm"
     integer(i_def) :: random_seed_size
     real(r_def), allocatable :: real_array(:)
 
     nullify( mesh, twod_mesh, aerosol_mesh, aerosol_twod_mesh, depository )
+    nullify( nudging_mesh, nudging_twod_mesh )
 
     depository => modeldb%fields%get_field_collection("depository")
     fd_fields => modeldb%fields%get_field_collection("fd_fields")
@@ -146,13 +148,29 @@ contains
       aerosol_twod_mesh => twod_mesh
     end if
 
+    ! Get information on nudging and if data is on a different mesh, get this
+    ! Use the prim mesh by default
+    nudging_mesh => mesh
+    nudging_twod_mesh => twod_mesh
+    if ( modeldb%config%formulation%use_multires_coupling() ) then
+      coarse_nudging = modeldb%config%multires_coupling%coarse_nudging()
+      if (coarse_nudging) then
+        nudging_mesh_name = modeldb%config%multires_coupling%nudging_mesh_name()
+        nudging_mesh => mesh_collection%get_mesh(nudging_mesh_name)
+        nudging_twod_mesh => mesh_collection%get_mesh(nudging_mesh, TWOD)
+        write( log_scratch_space,'(A,A)' ) "nudging mesh name:", nudging_mesh%get_mesh_name()
+        call log_event( log_scratch_space, LOG_LEVEL_TRACE )
+      end if
+    end if
+
     ! Instantiate the fields stored in model_data
-    call create_model_data( field_mapper, &
-                            modeldb,      &
+    call create_model_data( modeldb,      &
                             mesh,         &
                             twod_mesh,    &
                             aerosol_mesh, &
-                            aerosol_twod_mesh )
+                            aerosol_twod_mesh, &
+                            nudging_mesh, &
+                            nudging_twod_mesh )
 
     ! Instantiate the fields required to read the initial
     ! conditions from a file.

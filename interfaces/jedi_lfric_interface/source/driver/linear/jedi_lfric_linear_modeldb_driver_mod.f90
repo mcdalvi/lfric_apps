@@ -47,7 +47,6 @@ module jedi_lfric_linear_modeldb_driver_mod
   use driver_config_mod,            only : init_config
   use driver_time_mod,              only : init_time, final_time
   use extrusion_mod,                only : TWOD
-  use field_mapper_mod,             only : field_mapper_type
   use gungho_init_fields_mod,       only : create_model_data, &
                                            finalise_model_data
   use gungho_mod,                   only : gungho_required_namelists
@@ -102,16 +101,20 @@ contains
     type( mesh_type ),               pointer :: twod_mesh
     type( mesh_type ),               pointer :: aerosol_mesh
     type( mesh_type ),               pointer :: aerosol_twod_mesh
+    type( mesh_type ),               pointer :: nudging_mesh
+    type( mesh_type ),               pointer :: nudging_twod_mesh
     type( lfric_xios_context_type ), pointer :: io_context
     character( len=str_def )                 :: prime_mesh_name
     character( len=str_def )                 :: aerosol_mesh_name
+    character( len=str_def )                 :: nudging_mesh_name
     logical( kind=l_def )                    :: coarse_aerosol_ancil
     logical( kind=l_def )                    :: coarse_ozone_ancil
+    logical( kind=l_def )                    :: coarse_nudging
 
-    type(field_mapper_type)                  : field_mapper
     character(len=*), parameter :: io_context_name = "gungho_atm"
 
     nullify( mesh, twod_mesh, aerosol_mesh, aerosol_twod_mesh )
+    nullify( nudging_mesh, nudging_twod_mesh )
 
     ! 1. Initialise modeldb field collections, configuration and mpi.
     modeldb%mpi => mpi_obj
@@ -173,13 +176,30 @@ contains
       aerosol_twod_mesh => twod_mesh
     end if
 
+    ! Get information on nudging and if data is on a different mesh, get this
+    ! Use prime mesh by default
+    nudging_mesh => mesh
+    nudging_twod_mesh => twod_mesh
+    if ( modeldb%config%formulation%use_multires_coupling() ) then
+      coarse_nudging = modeldb%config%multires_coupling%coarse_nudging()
+      if (coarse_nudging) then
+        ! For now use the coarsest mesh
+        nudging_mesh_name = modeldb%config%multires_coupling%nudging_mesh_name()
+        nudging_mesh => mesh_collection%get_mesh(nudging_mesh_name)
+        nudging_twod_mesh => mesh_collection%get_mesh(nudging_mesh, TWOD)
+        write( log_scratch_space,'(A,A)' ) "nudging mesh name:", nudging_mesh%get_mesh_name()
+        call log_event( log_scratch_space, LOG_LEVEL_TRACE )
+      end if
+    end if
+
     ! Instantiate the fields stored in model_data
-    call create_model_data( field_mapper, &
-                            modeldb,      &
+    call create_model_data( modeldb,      &
                             mesh,         &
                             twod_mesh,    &
                             aerosol_mesh, &
-                            aerosol_twod_mesh )
+                            aerosol_twod_mesh, &
+                            nudging_mesh, &
+                            nudging_twod_mesh )
 
     ! Instantiate the linearisation state
     call linear_create_ls_analytic( modeldb, mesh, twod_mesh )
