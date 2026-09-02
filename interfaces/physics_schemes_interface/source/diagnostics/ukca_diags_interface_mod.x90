@@ -79,14 +79,12 @@ do i = 1, n_ukca_diags_3d
     case (trim(nm_rxnflux_oh_ch4_trop))
       l_diag_requested = init_diag(rxnflux_oh_ch4_trop, 'chemistry__rxnflux_oh_ch4_trop')
       if (l_diag_requested) then
-        !n_active_diags_3d = n_active_diags_3d + 1
         idiag_status_3d(i) = ukca_diag_status_requested
         call invoke ( setval_c(rxnflux_oh_ch4_trop, 0.0_r_def) )
       end if 
     case (trim(nm_o3_column_du))      
       l_diag_requested = init_diag(o3_column_du, 'chemistry__o3_column_du')
       if (l_diag_requested) then
-        !n_active_diags_3d = n_active_diags_3d + 1
         idiag_status_3d(i) = ukca_diag_status_requested
         call invoke ( setval_c(o3_column_du, 0.0_r_def) )
       end if 
