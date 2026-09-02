@@ -25,19 +25,20 @@ private
 
 public :: ukca_diag_setup
 
-integer(i_def), parameter, public :: n_diag_group = 2_i_def  ! Number of UKCA diagnostic
-                                                   ! groups used
-integer(i_def), parameter, public :: i_dgroup_2d = 1_i_def   ! Index used for 2D group
-                                                   ! requests
-integer(i_def), parameter, public :: i_dgroup_3d = 2_i_def   ! Index used for 3D group
-                                                   ! requests
+integer(i_def), parameter, public :: n_diag_group = 2_i_def  ! Number of UKCA
+                                                     ! diagnostic groups used
+
+integer(i_def), parameter, public :: i_dgroup_2d = 1_i_def   ! Index used for
+                                                   ! 2D group (not active yet)
+integer(i_def), parameter, public :: i_dgroup_3d = 2_i_def   ! Index used for 
+                                                     ! 3D group requests
 
 integer(i_def), parameter :: max_ukca_diags = 2_i_def  ! Maximum number of UKCA 
                                                        ! diagnostics currently
                                                        ! supported for output
 
-integer(i_def), parameter :: n_req_max(n_diag_group) = [2_i_def, max_ukca_diags] 
-                                ! Max. no. of fields currently supported, by group
+integer(i_def), parameter :: n_req_max(n_diag_group) = [2_i_def, max_ukca_diags]
+                             ! Max. no. of fields currently supported, by group
 
 ! Diagnostic short-names/ xios ids
 character(len=ukca_maxlen_diagname), parameter, public ::   &
@@ -51,15 +52,12 @@ character(len=ukca_maxlen_diagname), public :: diagnames_map(max_ukca_diags, 2)
                                 ukca_diagname_rxnflux_oh_ch4_trop/
   data diagnames_map(2,:) /nm_o3_column_du, ukca_diagname_o3_column_du/
 
-integer(i_def), public :: n_ukca_diags_2d  ! Counter for active requests
-integer(i_def), public :: n_ukca_diags_3d
+integer(i_def), public :: n_ukca_diags_3d  ! Counter for active requests
 
 ! Names of requested diagnostics -currently only 3D
-! character(len=ukca_maxlen_diagname), allocatable, public :: diagnames_flat_real(:)
 character(len=ukca_maxlen_diagname), allocatable, public :: diagnames_fullht_real(:)
 
 ! Integer status flag for diagnostics to match API arguments
-!integer(i_um), allocatable, public :: idiag_status_2d(:)
 integer(i_um), allocatable, public :: idiag_status_3d(:)
 
 contains
@@ -85,8 +83,6 @@ character(len=ukca_maxlen_diagname) :: diagname
 
 ! Array to temporarily hold names and status flags of requested diagnostics
 character(len=ukca_maxlen_diagname) :: tmp_diagnames_fullht_real(n_req_max(i_dgroup_3d))
-!character(len=ukca_maxlen_diagname) :: tmp_diagnames_flat_real(n_req_max(i_dgroup_2d))
-!integer(i_um) :: tmp_diag_status_2d(n_req_max(i_dgroup_2d))
 integer(i_um) :: tmp_diag_status_3d(n_req_max(i_dgroup_3d))
 
 ! Error handling variables
@@ -96,21 +92,17 @@ character(len=ukca_maxlen_message) :: ukca_errmsg
 ! End of header
 
 errcode = 0_i_um
-!tmp_diagnames_flat_real(:) = ''
 tmp_diagnames_fullht_real(:) = ''
-!tmp_diag_status_2d(:) = 0_i_um
 tmp_diag_status_3d(:) = 0_i_um
 
-!n_ukca_diags_2d = 0_i_def  ! Counter for active requests
+! Counter for active requests
 n_ukca_diags_3d = 0_i_def
 
-! do i_dgroup = 1, n_diag_group  -placeholder loop over two types
 do i = 1, n_req_max(i_dgroup_3d)
   n_ukca_diags_3d = n_ukca_diags_3d + 1
   tmp_diagnames_fullht_real(i) = diagnames_map(i, 2)
   tmp_diag_status_3d(i) = ukca_diag_status_requested
 end do
-!end do
 
 ! Populate the allocatable arrays with the requested diagnostics
 allocate(diagnames_fullht_real(n_ukca_diags_3d))
@@ -122,9 +114,7 @@ idiag_status_3d = tmp_diag_status_3d(1:n_ukca_diags_3d)
 if ( n_ukca_diags_3d > 0_i_def ) then
   CALL ukca_set_diagnostic_requests(                                           &
          errcode,                                                              &
-         !names_flat_real=diag_req(i_dgroup_2d)%names,                         &
          names_fullht_real=diagnames_fullht_real,                              &
-         !dreq_status_flat_real=diag_req(i_dgroup_2d)%status_flags,            &
          dreq_status_fullht_real=idiag_status_3d,                              &
          error_message=ukca_errmsg )
   if (errcode > 0_i_um)  then
