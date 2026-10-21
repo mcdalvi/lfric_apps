@@ -14,6 +14,7 @@ use ukca_api_mod,         only : ukca_maxlen_diagname, ukca_maxlen_message,    &
                                  ukca_diag_status_inactive,                    &
                                  ukca_set_diagnostic_requests,                 &
                                  ukca_diagname_rxnflux_oh_ch4_trop,            &
+                                 ukca_diagname_rxnflux_o1d_h2o_watm,           &
                                  ukca_diagname_o3_column_du
 
 use key_value_collection_mod,   only: key_value_collection_type
@@ -34,7 +35,7 @@ integer(i_def), parameter :: i_dgroup_2d = 1_i_def   ! Index used for
 integer(i_def), parameter :: i_dgroup_3d = 2_i_def   ! Index used for 
                                                      ! 3D group requests
 
-integer(i_def), parameter :: max_ukca_diags = 2_i_def  ! Maximum number
+integer(i_def), parameter :: max_ukca_diags = 3_i_def  ! Maximum number
                                                        ! of UKCA diagnostics
                                                        ! currently supported
 
@@ -44,6 +45,8 @@ integer(i_def), parameter :: n_req_max(n_diag_group) = [2_i_def, max_ukca_diags]
 ! Diagnostic short-names/ xios ids
 character(len=ukca_maxlen_diagname), parameter, public ::   &
   nm_rxnflux_oh_ch4_trop = 'rxnflux_oh_ch4_trop'
+character(len=ukca_maxlen_diagname), parameter, public ::   &
+  nm_rxnflux_o1d_h2o_watm = 'rxnflux_o1d_h2o_watm'
 character(len=ukca_maxlen_diagname), parameter, public ::   &
   nm_o3_column_du = 'o3_column_du'
 character(len=ukca_maxlen_diagname), parameter, public ::   &
@@ -73,7 +76,9 @@ type(key_value_collection_type), intent(inout) :: values
 character(len=ukca_maxlen_diagname) :: ukca_diagnames_map(max_ukca_diags, 2)
   data ukca_diagnames_map(1,:) /nm_rxnflux_oh_ch4_trop,   &
                                 ukca_diagname_rxnflux_oh_ch4_trop/
-  data ukca_diagnames_map(2,:) /nm_o3_column_du, ukca_diagname_o3_column_du/
+  data ukca_diagnames_map(2,:) /nm_rxnflux_o1d_h2o_watm,  &
+                                ukca_diagname_rxnflux_o1d_h2o_watm/
+  data ukca_diagnames_map(3,:) /nm_o3_column_du, ukca_diagname_o3_column_du/
 
 integer(i_def) :: n_req_ukca_diags_3d  ! Requested UKCA diagnostics (3D)
 

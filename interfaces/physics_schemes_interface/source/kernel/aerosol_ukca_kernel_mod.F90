@@ -1270,6 +1270,7 @@ subroutine aerosol_ukca_code( nlayers,                                         &
                                   ukca_diag_status_requested,             &
                                   ukca_diag_status_inactive,              &
                                   ukca_diagname_rxnflux_oh_ch4_trop,      &
+                                  ukca_diagname_rxnflux_o1d_h2o_watm,     &
                                   ukca_diagname_o3_column_du
 
   implicit none
