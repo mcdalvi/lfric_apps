@@ -111,6 +111,7 @@ module gungho_model_mod
   use um_physics_init_mod,         only : um_physics_init
   use um_radaer_lut_init_mod,      only : um_radaer_lut_init
   use um_ukca_init_mod,            only : um_ukca_init
+  use ukca_diag_setup_mod,         only: ukca_diag_setup
   use jules_timestep_alg_mod,      only : jules_timestep_type
   use stochastic_physics_config_mod, only : use_spt, &
                                             use_skeb
@@ -514,6 +515,8 @@ contains
     use formulation_config_mod,    only: use_physics
     use section_choice_config_mod, only: radiation, &
                                          radiation_socrates
+    use chemistry_config_mod,      only: chemistry_is_loaded, &
+                                         chem_scheme_strattrop
 #endif
 
     implicit none
@@ -1068,6 +1071,13 @@ contains
       end if
       ! Initialisation of UM variables related to the mesh
       call um_domain_init(mesh)
+      ! Setup UKCA diagnostics list based on requested diags,
+      ! only for strattrop scheme at present.
+      if ( modeldb%config%namelist_exists('chemistry') ) then
+        if ( modeldb%config%chemistry%chem_scheme() ==             &
+               chem_scheme_strattrop )                             &
+          call ukca_diag_setup(modeldb%values)
+      end if
     end if
 #endif
 
