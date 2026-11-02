@@ -84,7 +84,7 @@ subroutine photol_diags_code( nlayers,                                         &
              photol_rates( map_nphot(1) + ( (jp1-1)*(nlayers+1) ) + k )
   end do
   photol_rate_single( map_wth(1) + 0 ) = photol_rate_single( map_wth(1) + 1 )
-  
+
 return
 
 end subroutine photol_diags_code

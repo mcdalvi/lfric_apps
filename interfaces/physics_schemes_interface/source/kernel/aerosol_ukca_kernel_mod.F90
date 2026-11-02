@@ -1238,7 +1238,7 @@ subroutine aerosol_ukca_code( nlayers,                                         &
                               fldname_photol_rates,                            &
                               nlev_ent_tr_mix,                                 &
                               n_phot_spc
-
+  
   use log_mod,              only: log_event, log_scratch_space, LOG_LEVEL_ERROR
   use chemistry_config_mod, only: chem_scheme, chem_scheme_strattrop
 

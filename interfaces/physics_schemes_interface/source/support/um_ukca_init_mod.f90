@@ -113,6 +113,7 @@ module um_ukca_init_mod
   ! callback routine for ozone column diagnostic
     photol_calc_ozonecol
 
+
   implicit none
 
   private
@@ -1309,7 +1310,7 @@ contains
     ! Switch on optional UM boundary layer diagnostics required by UKCA
     if (any(env_names_bllev_real(:) == fldname_bl_tke))                        &
       bl_diag%l_request_tke = .true.
-
+    
   end subroutine ukca_init
   subroutine ukca_emiss_init()
   !> @brief Set up the emissions for UKCA model
